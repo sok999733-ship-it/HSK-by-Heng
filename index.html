@@ -1,0 +1,1347 @@
+<!DOCTYPE html>
+<html lang="km">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>HENG ស្វែងយល់មេរៀន ភាសាខ្មែរ - ចិន (HSK 1-4 Dictionary)</title>
+    <link href="https://fonts.googleapis.com/css2?family=Kantumruy+Pro:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        * {
+            box-sizing: border-box;
+        }
+        body {
+            font-family: 'Kantumruy Pro', 'Segoe UI', Tahoma, sans-serif;
+            background-color: #f4f7f6;
+            margin: 0;
+            padding: 20px;
+            color: #2c3e50;
+        }
+        .container {
+            max-width: 900px;
+            margin: 0 auto;
+            background: white;
+            padding: 30px;
+            border-radius: 12px;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.08);
+        }
+        h1 {
+            text-align: center;
+            color: #1a365d;
+            margin-top: 0;
+            margin-bottom: 20px;
+            font-size: 26px;
+        }
+        .controls {
+            display: flex;
+            gap: 12px;
+            margin-bottom: 20px;
+            flex-wrap: wrap;
+        }
+        .search-box {
+            flex: 1;
+            min-width: 200px;
+            padding: 12px 16px;
+            font-size: 15px;
+            border: 1px solid #cbd5e0;
+            border-radius: 8px;
+            outline: none;
+            transition: all 0.2s;
+            font-family: inherit;
+        }
+        .search-box:focus {
+            border-color: #3182ce;
+            box-shadow: 0 0 0 3px rgba(49, 130, 206, 0.15);
+        }
+        .filter-select {
+            padding: 12px 16px;
+            font-size: 15px;
+            border: 1px solid #cbd5e0;
+            border-radius: 8px;
+            outline: none;
+            background: white;
+            cursor: pointer;
+            font-family: inherit;
+            font-weight: 500;
+        }
+        .stats-bar {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 15px;
+            font-size: 14px;
+            color: #718096;
+        }
+        .lessons-grid {
+            display: grid;
+            gap: 12px;
+        }
+        .lesson-card {
+            background: #f8fafc;
+            border-left: 5px solid #3182ce;
+            padding: 14px 18px;
+            border-radius: 8px;
+            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            transition: transform 0.15s ease, box-shadow 0.15s ease;
+        }
+        .lesson-card:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.08);
+        }
+        .lesson-card.hsk1 { border-left-color: #3182ce; }
+        .lesson-card.hsk2 { border-left-color: #38a169; }
+        .lesson-card.hsk3 { border-left-color: #dd6b20; }
+        .lesson-card.hsk4 { border-left-color: #e53e3e; }
+
+        .lesson-info {
+            display: flex;
+            flex-direction: column;
+            gap: 2px;
+        }
+        .chinese-wrapper {
+            display: flex;
+            align-items: baseline;
+            gap: 10px;
+        }
+        .chinese {
+            font-size: 22px;
+            font-weight: bold;
+            color: #2d3748;
+        }
+        .tag {
+            font-size: 11px;
+            font-weight: 700;
+            padding: 2px 6px;
+            border-radius: 4px;
+            color: white;
+            text-transform: uppercase;
+        }
+        .tag-hsk1 { background-color: #3182ce; }
+        .tag-hsk2 { background-color: #38a169; }
+        .tag-hsk3 { background-color: #dd6b20; }
+        .tag-hsk4 { background-color: #e53e3e; }
+
+        .pinyin {
+            font-style: italic;
+            color: #4a5568;
+            font-size: 14px;
+        }
+        .khmer {
+            font-size: 16px;
+            color: #2b6cb0;
+            font-weight: 500;
+        }
+        .audio-btn {
+            background-color: #3182ce;
+            color: white;
+            border: none;
+            padding: 8px 16px;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 14px;
+            font-weight: 500;
+            transition: background 0.2s;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+        .audio-btn:hover {
+            background-color: #2b6cb0;
+        }
+        .pagination {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            gap: 10px;
+            margin-top: 25px;
+        }
+        .page-btn {
+            padding: 8px 14px;
+            border: 1px solid #cbd5e0;
+            background: white;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 14px;
+        }
+        .page-btn:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+        }
+        .page-info {
+            font-size: 14px;
+            color: #4a5568;
+        }
+        .no-result {
+            text-align: center;
+            padding: 40px;
+            color: #a0aec0;
+            font-size: 16px;
+        }
+    </style>
+</head>
+<body>
+
+    <div class="container">
+        <h1>HENG ស្វែងយល់មេរៀន ភាសាខ្មែរ - ចិន (HSK 1-4 Dictionary)</h1>
+        
+        <div class="controls">
+            <input type="text" id="searchInput" class="search-box" placeholder="ស្វែងរកតាម អក្សរចិន, Pinyin ឬ ភាសាខ្មែរ..." oninput="onFilterChange()">
+            <select id="levelFilter" class="filter-select" onchange="onFilterChange()">
+                <option value="ALL">គ្រប់កម្រិត (All HSK)</option>
+                <option value="HSK1">HSK Level 1</option>
+                <option value="HSK2">HSK Level 2</option>
+                <option value="HSK3">HSK Level 3</option>
+                <option value="HSK4">HSK Level 4</option>
+            </select>
+        </div>
+
+        <div class="stats-bar">
+            <span id="totalResults">រកឃើញ 0 ពាក្យ</span>
+            <span id="pageIndicator">ទំព័រ 1 / 1</span>
+        </div>
+
+        <div id="lessonsList" class="lessons-grid"></div>
+
+        <div class="pagination">
+            <button id="prevBtn" class="page-btn" onclick="changePage(-1)">‹ មុន</button>
+            <span id="paginationText" class="page-info">1</span>
+            <button id="nextBtn" class="page-btn" onclick="changePage(1)">បន្ទាប់ ›</button>
+        </div>
+    </div>
+
+    <script>
+        // HSK 1, HSK 2, HSK 3, and HSK 4 Vocabulary & Phrases Database
+        const vocabulary = [
+            // --- HSK 2 ---
+            { c: "吧", p: "ba", k: "មែនទេ / ចុះ (suggestion particle)", level: "HSK2" },
+            { c: "白", p: "bái", k: "ពណ៌ស (white)", level: "HSK2" },
+            { c: "百", p: "bǎi", k: "រយ (hundred)", level: "HSK2" },
+            { c: "帮助", p: "bāngzhù", k: "ជួយ / ជំនួយ (to help)", level: "HSK2" },
+            { c: "报纸", p: "bàozhǐ", k: "កាសែត (newspaper)", level: "HSK2" },
+            { c: "比", p: "bǐ", k: "ធៀបនឹង (compare to)", level: "HSK2" },
+            { c: "别", p: "bié", k: "កុំ (don't)", level: "HSK2" },
+            { c: "长", p: "cháng", k: "វែង (long)", level: "HSK2" },
+            { c: "唱歌", p: "chànggē", k: "ច្រៀង (sing a song)", level: "HSK2" },
+            { c: "出", p: "chū", k: "ចេញ (go out)", level: "HSK2" },
+            { c: "穿", p: "chuān", k: "ស្លៀកពាក់ (wear)", level: "HSK2" },
+            { c: "次", p: "cì", k: "លើក / ជុំ (time / occurrence)", level: "HSK2" },
+            { c: "从", p: "cóng", k: "ពី (from)", level: "HSK2" },
+            { c: "错", p: "cuò", k: "ខុស (wrong)", level: "HSK2" },
+            { c: "打篮球", p: "dǎ lánqiú", k: "លេងបាល់បោះ (play basketball)", level: "HSK2" },
+            { c: "大家", p: "dàjiā", k: "អ្នកទាំងអស់គ្នា (everyone)", level: "HSK2" },
+            { c: "到", p: "dào", k: "ដល់ (arrive / to)", level: "HSK2" },
+            { c: "得", p: "de", k: "បាន / យ៉ាង (particle for degree)", level: "HSK2" },
+            { c: "等", p: "děng", k: "រង់ចាំ (wait)", level: "HSK2" },
+            { c: "弟弟", p: "dìdi", k: "ប្អូនប្រុស (younger brother)", level: "HSK2" },
+            { c: "第一", p: "dì-yī", k: "ទីមួយ (first)", level: "HSK2" },
+            { c: "懂", p: "dǒng", k: "យល់ (understand)", level: "HSK2" },
+            { c: "对", p: "duì", k: "ត្រូវ / ចំពោះ (correct / to)", level: "HSK2" },
+            { c: "房间", p: "fángjiān", k: "បន្ទប់ (room)", level: "HSK2" },
+            { c: "非常", p: "fēicháng", k: "ខ្លាំងណាស់ (very much)", level: "HSK2" },
+            { c: "服务员", p: "fúwùyuán", k: "អ្នកបម្រើ (waiter/waitress)", level: "HSK2" },
+            { c: "高", p: "gāo", k: "ខ្ពស់ (tall/high)", level: "HSK2" },
+            { c: "告诉", p: "gàosu", k: "ប្រាប់ (tell)", level: "HSK2" },
+            { c: "哥哥", p: "gēge", k: "បងប្រុស (older brother)", level: "HSK2" },
+            { c: "给", p: "gěi", k: "ឱ្យ (give)", level: "HSK2" },
+            { c: "公共汽车", p: "gōnggòng qìchē", k: "រថយន្តក្រុង (bus)", level: "HSK2" },
+            { c: "公斤", p: "gōngjīn", k: "គីឡូក្រាម (kilogram)", level: "HSK2" },
+            { c: "公司", p: "gōngsī", k: "ក្រុមហ៊ុន (company)", level: "HSK2" },
+            { c: "贵", p: "guì", k: "ថ្លៃ (expensive)", level: "HSK2" },
+            { c: "过", p: "guò", k: "ធ្លាប់ / ឆ្លងកាត់ (pass / experienced)", level: "HSK2" },
+            { c: "还", p: "hái", k: "នៅតែ / ថែមទាំង (still / also)", level: "HSK2" },
+            { c: "孩子", p: "háizi", k: "កូន / ក្មេង (child)", level: "HSK2" },
+            { c: "好吃", p: "hǎochī", k: "ឆ្ងាញ់ (delicious)", level: "HSK2" },
+            { c: "黑", p: "hēi", k: "ពណ៌ខ្មៅ (black)", level: "HSK2" },
+            { c: "红", p: "hóng", k: "ពណ៌ក្រហម (red)", level: "HSK2" },
+            { c: "欢迎", p: "huānyíng", k: "ស្វាគមន៍ (welcome)", level: "HSK2" },
+            { c: "回答", p: "huídá", k: "ឆ្លើយ (answer)", level: "HSK2" },
+            { c: "机场", p: "jīchǎng", k: "ព្រលានយន្តហោះ (airport)", level: "HSK2" },
+            { c: "鸡蛋", p: "jīdàn", k: "ពងមាន់ (egg)", level: "HSK2" },
+            { c: "件", p: "jiàn", k: "កំផ្លេ / ខ្នាតខោអាវ (measure word for clothes)", level: "HSK2" },
+            { c: "教室", p: "jiàoshì", k: "បន្ទប់រៀន (classroom)", level: "HSK2" },
+            { c: "姐姐", p: "jiějie", k: "បងស្រី (older sister)", level: "HSK2" },
+            { c: "介绍", p: "jièshào", k: "ណែនាំ (introduce)", level: "HSK2" },
+            { c: "进", p: "jìn", k: "ចូល (enter)", level: "HSK2" },
+            { c: "近", p: "jìn", k: "ជិត (near)", level: "HSK2" },
+            { c: "就", p: "jiù", k: "ភ្លាម / ក៏ (just / precisely)", level: "HSK2" },
+            { c: "觉得", p: "juéde", k: "យល់ឃើញថា / មានអារម្មណ៍ថា (feel/think)", level: "HSK2" },
+            { c: "咖啡", p: "kāfēi", k: "កាហ្វេ (coffee)", level: "HSK2" },
+            { c: "开始", p: "kāishǐ", k: "ចាប់ផ្តើម (start)", level: "HSK2" },
+            { c: "考试", p: "kǎoshì", k: "ប្រឡង (exam)", level: "HSK2" },
+            { c: "可能", p: "kěnéng", k: "ប្រហែលជា (maybe/possible)", level: "HSK2" },
+            { c: "可以", p: "kěyǐ", k: "អាច (can/may)", level: "HSK2" },
+            { c: "课", p: "kè", k: "មេរៀន (lesson/class)", level: "HSK2" },
+            { c: "快", p: "kuài", k: "លឿន (fast)", level: "HSK2" },
+            { c: "快乐", p: "kuàilè", k: "សប្បាយរីករាយ (happy)", level: "HSK2" },
+            { c: "累", p: "lèi", k: "ហត់ (tired)", level: "HSK2" },
+            { c: "离", p: "lí", k: "ឃ្លាតពី (away from)", level: "HSK2" },
+            { c: "两", p: "liǎng", k: "ពីរ (two - used with measure words)", level: "HSK2" },
+            { c: "零", p: "líng", k: "សូន្យ (zero)", level: "HSK2" },
+            { c: "路", p: "lù", k: "ផ្លូវ (road)", level: "HSK2" },
+            { c: "旅游", p: "lǚyóu", k: "ធ្វើដំណើរ / ទេសចរណ៍ (travel)", level: "HSK2" },
+            { c: "卖", p: "mài", k: "លក់ (sell)", level: "HSK2" },
+            { c: "慢", p: "màn", k: "យឺត (slow)", level: "HSK2" },
+            { c: "忙", p: "máng", k: "រវល់ (busy)", level: "HSK2" },
+            { c: "妹妹", p: "mèimei", k: "ប្អូនស្រី (younger sister)", level: "HSK2" },
+            { c: "门", p: "mén", k: "ទ្វារ (door)", level: "HSK2" },
+            { c: "面条", p: "miàntiáo", k: "មី (noodles)", level: "HSK2" },
+            { c: "男", p: "nán", k: "ប្រុស (male)", level: "HSK2" },
+            { c: "您", p: "nín", k: "លោក / អ្នក (you - polite form)", level: "HSK2" },
+            { c: "牛奶", p: "niúnǎi", k: "ទឹកដោះគោ (milk)", level: "HSK2" },
+            { c: "女", p: "nǚ", k: "ស្រី (female)", level: "HSK2" },
+            { c: "旁边", p: "pángbiān", k: "ខាងៗ / ក្បែរ (beside/side)", level: "HSK2" },
+            { c: "跑步", p: "pǎobù", k: "រត់ (run)", level: "HSK2" },
+            { c: "便宜", p: "piányi", k: "ថោក (cheap)", level: "HSK2" },
+            { c: "票", p: "piào", k: "សំបុត្រ (ticket)", level: "HSK2" },
+            { c: "妻子", p: "qīzi", k: "ប្រពន្ធ (wife)", level: "HSK2" },
+            { c: "起床", p: "qǐchuáng", k: "ក្រោកពីគេង (get up)", level: "HSK2" },
+            { c: "千", p: "qiān", k: "ពាន់ (thousand)", level: "HSK2" },
+            { c: "铅笔", p: "qiānbǐ", k: "ខ្មៅដៃ (pencil)", level: "HSK2" },
+            { c: "晴", p: "qíng", k: "មេឃស្រឡះ (sunny/clear)", level: "HSK2" },
+            { c: "让", p: "ràng", k: "អនុញ្ញាត / ឱ្យ (let/allow)", level: "HSK2" },
+            { c: "日", p: "rì", k: "ថ្ងៃ (day/sun)", level: "HSK2" },
+            { c: "上班", p: "shàngbān", k: "ធ្វើការ (go to work)", level: "HSK2" },
+            { c: "身体", p: "shēntǐ", k: "រាងកាយ / សុខភាព (body/health)", level: "HSK2" },
+            { c: "生病", p: "shēngbìng", k: "ឈឺ (fall sick)", level: "HSK2" },
+            { c: "生日", p: "shēngrì", k: "ថ្ងៃកំណើត (birthday)", level: "HSK2" },
+            { c: "时间", p: "shíjiān", k: "ពេលវេលា (time)", level: "HSK2" },
+            { c: "事情", p: "shìqing", k: "កិច្ចការ / រឿងរ៉ាវ (matter/thing)", level: "HSK2" },
+            { c: "手表", p: "shǒubiǎo", k: "នាឡិកាដៃ (watch)", level: "HSK2" },
+            { c: "手机", p: "shǒujī", k: "ទូរស័ព្ទដៃ (mobile phone)", level: "HSK2" },
+            { c: "说话", p: "shuōhuà", k: "និយាយ (speak)", level: "HSK2" },
+            { c: "送", p: "sòng", k: "ជូន / កាដូ (send/give as present)", level: "HSK2" },
+            { c: "它", p: "tā", k: "វា (it)", level: "HSK2" },
+            { c: "踢足球", p: "tī zúqiú", k: "ទាត់បាល់ (play soccer)", level: "HSK2" },
+            { c: "题", p: "tí", k: "សំណួរ / លំហាត់ (question/problem)", level: "HSK2" },
+            { c: "跳舞", p: "tiàowǔ", k: "រាំ (dance)", level: "HSK2" },
+            { c: "外", p: "wài", k: "ខាងក្រៅ (outside)", level: "HSK2" },
+            { c: "完", p: "wán", k: "ចប់ / រួចរាល់ (finish)", level: "HSK2" },
+            { c: "玩", p: "wán", k: "លេង (play)", level: "HSK2" },
+            { c: "晚上", p: "wǎnshang", k: "ពេលយប់ (evening/night)", level: "HSK2" },
+            { c: "为什么", p: "wèishénme", k: "ហេតុអ្វី (why)", level: "HSK2" },
+            { c: "问", p: "wèn", k: "សួរ (ask)", level: "HSK2" },
+            { c: "问题", p: "wèntí", k: "បញ្ហា / សំណួរ (question/problem)", level: "HSK2" },
+            { c: "西瓜", p: "xīguā", k: "ឪឡឹក (watermelon)", level: "HSK2" },
+            { c: "希望", p: "xīwàng", k: "សង្ឃឹម (hope)", level: "HSK2" },
+            { c: "洗", p: "xǐ", k: "លាង / បោក (wash)", level: "HSK2" },
+            { c: "小时", p: "xiǎoshí", k: "ម៉ោង (hour)", level: "HSK2" },
+            { c: "笑", p: "xiào", k: "សើច (laugh/smile)", level: "HSK2" },
+            { c: "新", p: "xīn", k: "ថ្មី (new)", level: "HSK2" },
+            { c: "姓", p: "xìng", k: "ត្រកូល (surname)", level: "HSK2" },
+            { c: "休息", p: "xiūxi", k: "សម្រាក (rest)", level: "HSK2" },
+            { c: "雪", p: "xuě", k: "ព្រិល (snow)", level: "HSK2" },
+            { c: "颜色", p: "yánsè", k: "ពណ៌ (color)", level: "HSK2" },
+            { c: "眼晴", p: "yǎnjing", k: "ភ្នែក (eye)", level: "HSK2" },
+            { c: "羊肉", p: "yángròu", k: "សាច់ពពែ/សាច់ចៀម (mutton)", level: "HSK2" },
+            { c: "药", p: "yào", k: "ថ្នាំ (medicine)", level: "HSK2" },
+            { c: "要", p: "yào", k: "ចង់ / ត្រូវតែ (want/must)", level: "HSK2" },
+            { c: "意思", p: "yìsi", k: "ន័យ / អត្ថន័យ (meaning)", level: "HSK2" },
+            { c: "阴", p: "yīn", k: "ស្រពាប់ស្រពោន/មេឃរកភ្លៀង (cloudy)", level: "HSK2" },
+            { c: "因为", p: "yīnwèi", k: "ព្រោះតែ (because)", level: "HSK2" },
+            { c: "游泳", p: "yóuyǒng", k: "ហែលទឹក (swim)", level: "HSK2" },
+            { c: "右边", p: "yòubian", k: "ខាងស្តាំ (right side)", level: "HSK2" },
+            { c: "鱼", p: "yú", k: "ត្រី (fish)", level: "HSK2" },
+            { c: "远", p: "yuǎn", k: "ឆ្ងាយ (far)", level: "HSK2" },
+            { c: "运动", p: "yùndòng", k: "កីឡា (sports/exercise)", level: "HSK2" },
+            { c: "丈夫", p: "zhàngfu", k: "ប្តី (husband)", level: "HSK2" },
+            { c: "找", p: "zhǎo", k: "ស្វែងរក (find/look for)", level: "HSK2" },
+            { c: "着", p: "zhe", k: "កំពុងតែ (aspectual particle)", level: "HSK2" },
+            { c: "真", p: "zhēn", k: "ពិតជា (really/true)", level: "HSK2" },
+            { c: "正在", p: "zhèngzài", k: "កំពុងតែ (in process of)", level: "HSK2" },
+            { c: "知道", p: "zhīdào", k: "ដឹង / ស្គាល់ (know)", level: "HSK2" },
+            { c: "准备", p: "zhǔnbèi", k: "រៀបចំ (prepare)", level: "HSK2" },
+            { c: "自行车", p: "zìxíngchē", k: "កង់ (bicycle)", level: "HSK2" },
+            { c: "走", p: "zǒu", k: "ដើរ (walk)", level: "HSK2" },
+            { c: "最", p: "zuì", k: "បំផុត (most)", level: "HSK2" },
+
+            // --- HSK 3 ---
+            { c: "阿姨", p: "āyí", k: "អ្នកមីង (auntie)", level: "HSK3" },
+            { c: "啊", p: "a", k: "អូ / ណា (exclamation particle)", level: "HSK3" },
+            { c: "矮", p: "ǎi", k: "ទាប (short in height)", level: "HSK3" },
+            { c: "爱好", p: "àihào", k: "ការចូលចិត្ត / ចំណង់ចំណូលចិត្ត (hobby)", level: "HSK3" },
+            { c: "安静", p: "ānjìng", k: "ស្ងប់ស្ងាត់ (quiet)", level: "HSK3" },
+            { c: "把", p: "bǎ", k: "កាន់ / យក (disposition particle)", level: "HSK3" },
+            { c: "搬", p: "bān", k: "រើ / ផ្លាស់ប្តូរ (move)", level: "HSK3" },
+            { c: "班", p: "bān", k: "ថ្នាក់ / វេនធ្វើការ (class/shift)", level: "HSK3" },
+            { c: "办法", p: "bànfǎ", k: "វិធី / ដំណោះស្រាយ (method/way)", level: "HSK3" },
+            { c: "办公室", p: "bàngōngshì", k: "ការិយាល័យ (office)", level: "HSK3" },
+            { c: "半", p: "bàn", k: "កន្លះ (half)", level: "HSK3" },
+            { c: "帮忙", p: "bāngmáng", k: "ជួយ (help)", level: "HSK3" },
+            { c: "包", p: "bāo", k: "កាបូប / កញ្ចប់ (bag/pack)", level: "HSK3" },
+            { c: "饱", p: "bǎo", k: "ឆែត (full after meal)", level: "HSK3" },
+            { c: "北方", p: "běifāng", k: "ភាគខាងជើង (north)", level: "HSK3" },
+            { c: "被", p: "bèi", k: "ត្រូវគេ... (by - passive indicator)", level: "HSK3" },
+            { c: "鼻子", p: "bízi", k: "ច្រមុះ (nose)", level: "HSK3" },
+            { c: "比较", p: "bǐjiào", k: "រៀង / ប្រៀបធៀប (compare / relatively)", level: "HSK3" },
+            { c: "比赛", p: "bǐsài", k: "ការប្រកួត (competition)", level: "HSK3" },
+            { c: "笔记本", p: "bǐjìběn", k: "សៀវភៅកត់ត្រា / Laptop (notebook)", level: "HSK3" },
+            { c: "必须", p: "bìxū", k: "ចាំបាច់ត្រូវតែ (must)", level: "HSK3" },
+            { c: "变化", p: "biànhuà", k: "ការផ្លាស់ប្តូរ (change)", level: "HSK3" },
+            { c: "别人", p: "biéren", k: "អ្នកដទៃ (other people)", level: "HSK3" },
+            { c: "宾馆", p: "bīnguǎn", k: "សណ្ឋាគារ (hotel)", level: "HSK3" },
+            { c: "冰箱", p: "bīngxiāng", k: "ទូរទឹកកក (refrigerator)", level: "HSK3" },
+            { c: "才", p: "cái", k: "ទើបតែ (just / only then)", level: "HSK3" },
+            { c: "菜单", p: "càidān", k: "បញ្ជីមុខម្ហូប (menu)", level: "HSK3" },
+            { c: "参加", p: "cānjiā", k: "ចូលរួម (participate)", level: "HSK3" },
+            { c: "草", p: "cǎo", k: "ស្មៅ (grass)", level: "HSK3" },
+            { c: "层", p: "céng", k: "ជាន់ (floor/layer)", level: "HSK3" },
+            { c: "差", p: "chà", k: "ខ្វះ / អាក្រក់ (short of / poor)", level: "HSK3" },
+            { c: "超市", p: "chāoshì", k: "ផ្សារទំនើប (supermarket)", level: "HSK3" },
+            { c: "衬衫", p: "chènshān", k: "អាវស shirts (shirt)", level: "HSK3" },
+            { c: "成绩", p: "chéngjì", k: "ពិន្ទុ / លទ្ធផល (score/achievement)", level: "HSK3" },
+            { c: "城市", p: "chéngshì", k: "ទីក្រុង (city)", level: "HSK3" },
+            { c: "迟到", p: "chídào", k: "មកយឺត (late)", level: "HSK3" },
+            { c: "出现", p: "chūxiàn", k: "លេចឡើង (appear)", level: "HSK3" },
+            { c: "厨房", p: "chúfáng", k: "ផ្ទះបាយ (kitchen)", level: "HSK3" },
+            { c: "除了", p: "chúle", k: "ក្រៅពី (except for)", level: "HSK3" },
+            { c: "春", p: "chūn", k: "រដូវផ្ការីក (spring)", level: "HSK3" },
+            { c: "词典", p: "cídiǎn", k: "វចនានុក្រម (dictionary)", level: "HSK3" },
+            { c: "聪明", p: "cōngming", k: "ឆ្លាត (clever)", level: "HSK3" },
+            { c: "打算", p: "dǎsuan", k: "គម្រោង / បំណង (plan)", level: "HSK3" },
+            { c: "带", p: "dài", k: "យកតាមខ្លួន / នាំ (bring/take)", level: "HSK3" },
+            { c: "担心", p: "dānxīn", k: "ព្រួយបារម្ភ (worry)", level: "HSK3" },
+            { c: "蛋糕", p: "dàngāo", k: "នំខេក (cake)", level: "HSK3" },
+            { c: "当然", p: "dāngrán", k: "ប្រាកដណាស់ (of course)", level: "HSK3" },
+            { c: "灯", p: "dēng", k: "អំពូលភ្លើង (lamp/light)", level: "HSK3" },
+            { c: "地方", p: "dìfang", k: "កន្លែង (place)", level: "HSK3" },
+            { c: "地铁", p: "dìtiě", k: "រថភ្លើងក្រោមដី (subway)", level: "HSK3" },
+            { c: "地图", p: "dìtú", k: "ផែនទី (map)", level: "HSK3" },
+            { c: "电梯", p: "diàntī", k: "ជណ្តើរយន្ត (elevator)", level: "HSK3" },
+            { c: "电子邮件", p: "diànzǐ yóujiàn", k: "អ៊ីមែល (email)", level: "HSK3" },
+            { c: "东", p: "dōng", k: "ទិសខាងកើត (east)", level: "HSK3" },
+            { c: "冬", p: "dōng", k: "រដូវរងា (winter)", level: "HSK3" },
+            { c: "动物", p: "dòngwù", k: "សត្វ (animal)", level: "HSK3" },
+            { c: "短", p: "duǎn", k: "ខ្លី (short)", level: "HSK3" },
+            { c: "段", p: "duàn", k: "កថាខណ្ឌ / កំណាត់ (section/paragraph)", level: "HSK3" },
+            { c: "锻炼", p: "duànliàn", k: "ហាត់ប្រាណ (exercise)", level: "HSK3" },
+            { c: "多么", p: "duōme", k: "យ៉ាងណា (how...)", level: "HSK3" },
+            { c: "饿", p: "è", k: "ឃ្លាន (hungry)", level: "HSK3" },
+            { c: "耳朵", p: "ěrduo", k: "ត្រចៀក (ear)", level: "HSK3" },
+            { c: "发烧", p: "fāshāo", k: "ក្តៅខ្លួន (fever)", level: "HSK3" },
+            { c: "发现", p: "fāxiàn", k: "រកឃើញ (discover)", level: "HSK3" },
+            { c: "方便", p: "fāngbiàn", k: "សម្រួល / ងាយស្រួល (convenient)", level: "HSK3" },
+            { c: "放", p: "fàng", k: "ដាក់ / ផ្ទុក (put/place)", level: "HSK3" },
+            { c: "放心", p: "fàngxīn", k: "អអស់កង្វល់ (set mind at ease)", level: "HSK3" },
+            { c: "分", p: "fēn", k: "នាទី / ពិន្ទុ (minute/point)", level: "HSK3" },
+            { c: "复习", p: "fùxí", k: "រំលឹកមេរៀន (review)", level: "HSK3" },
+            { c: "干净", p: "gānjìng", k: "ស្អាត (clean)", level: "HSK3" },
+            { c: "感冒", p: "gǎnmào", k: "គ្រុនផ្តាសាយ (catch cold)", level: "HSK3" },
+            { c: "感兴趣", p: "gǎn xìngqù", k: "មានចំណាប់អារម្មណ៍ (be interested in)", level: "HSK3" },
+            { c: "刚才", p: "gāngcái", k: "អំបាញ់មិញ (just now)", level: "HSK3" },
+            { c: "高", p: "gāo", k: "ខ្ពស់ (tall)", level: "HSK3" },
+            { c: "根据", p: "gēnjù", k: "ផ្អែកលើ / យោងតាម (according to)", level: "HSK3" },
+            { c: "公园", p: "gōngyuán", k: "សួនសាធារណៈ (park)", level: "HSK3" },
+            { c: "故事", p: "gùshi", k: "រឿង (story)", level: "HSK3" },
+            { c: "刮风", p: "guāfēng", k: "បក់បោក (blow wind)", level: "HSK3" },
+            { c: "关", p: "guān", k: "បិទ (close/turn off)", level: "HSK3" },
+            { c: "关系", p: "guānxi", k: "ទំនាក់ទំនង (relationship)", level: "HSK3" },
+            { c: "关心", p: "guānxīn", k: "យកចិត្តទុកដាក់ (care about)", level: "HSK3" },
+            { c: "国家", p: "guójiā", k: "ប្រទេស (country)", level: "HSK3" },
+            { c: "过", p: "guò", k: "ឆ្លង / ធ្លាប់ (pass)", level: "HSK3" },
+            { c: "过去", p: "guòqù", k: "អតីតកាល (past)", level: "HSK3" },
+            { c: "害怕", p: "hàipà", k: "ភ័យខ្លាច (be afraid)", level: "HSK3" },
+            { c: "黑板", p: "hēibǎn", k: "ក្ដារខៀន (blackboard)", level: "HSK3" },
+            { c: "护照", p: "hùzhào", k: "លិខិតឆ្លងដែន (passport)", level: "HSK3" },
+            { c: "花", p: "huā", k: "ផ្កា / ចាយ (flower / spend)", level: "HSK3" },
+            { c: "画", p: "huà", k: "គូរ (draw/paint)", level: "HSK3" },
+            { c: "坏", p: "huài", k: "អាក្រក់ / ខូច (bad/broken)", level: "HSK3" },
+            { c: "环境", p: "huánjìng", k: "បរិស្ថាន (environment)", level: "HSK3" },
+            { c: "换", p: "huàn", k: "ផ្លាស់ប្តូរ / ដូរ (change/exchange)", level: "HSK3" },
+            { c: "黄", p: "huáng", k: "ពណ៌លឿង (yellow)", level: "HSK3" },
+            { c: "会议", p: "huìyì", k: "ការប្រជុំ (meeting)", level: "HSK3" },
+            { c: "或者", p: "huòzhě", k: "ឬមួយ (or)", level: "HSK3" },
+            { c: "机会", p: "jīhuì", k: "ឱកាស (opportunity)", level: "HSK3" },
+            { c: "极", p: "jí", k: "បំផុត (extremely)", level: "HSK3" },
+            { c: "记得", p: "jìde", k: "ចងចាំ (remember)", level: "HSK3" },
+            { c: "季节", p: "jìjié", k: "រដូវ (season)", level: "HSK3" },
+            { c: "检查", p: "jiǎnchá", k: "ពិនិត្យ (inspect/check)", level: "HSK3" },
+            { c: "简单", p: "jiǎndān", k: "ងាយស្រួល (simple)", level: "HSK3" },
+            { c: "健康", p: "jiànkāng", k: "សុខភាព (health)", level: "HSK3" },
+            { c: "见面", p: "jiànmiàn", k: "ជួបមុខ (meet)", level: "HSK3" },
+            { c: "讲", p: "jiǎng", k: "និយាយ / ពន្យល់ (speak/explain)", level: "HSK3" },
+            { c: "教", p: "jiāo", k: "បង្រៀន (teach)", level: "HSK3" },
+            { c: "角", p: "jiǎo", k: "កាក់ / កែង (corner/dime)", level: "HSK3" },
+            { c: "脚", p: "jiǎo", k: "ជើង (foot)", level: "HSK3" },
+            { c: "接", p: "jiē", k: "ទទួល (pick up/receive)", level: "HSK3" },
+            { c: "街道", p: "jiēdào", k: "ផ្លូវ / វិថី (street)", level: "HSK3" },
+            { c: "结婚", p: "jiéhūn", k: "រៀបការ (marry)", level: "HSK3" },
+            { c: "结束", p: "jiéshù", k: "បញ្ចប់ (end/finish)", level: "HSK3" },
+            { c: "节目", p: "jiémù", k: "កម្មវិធី (program/show)", level: "HSK3" },
+            { c: "节日", p: "jiérì", k: "ពិធីបុណ្យ (festival)", level: "HSK3" },
+            { c: "解决", p: "jiějué", k: "ដោះស្រាយ (solve)", level: "HSK3" },
+            { c: "借", p: "jiè", k: "ខ្ចី (borrow/lend)", level: "HSK3" },
+            { c: "经常", p: "jīngcháng", k: "ញឹកញាប់ (often)", level: "HSK3" },
+            { c: "经过", p: "jīngguò", k: "ឆ្លងកាត់ (pass through)", level: "HSK3" },
+            { c: "经理", p: "jīnglǐ", k: "អ្នកគ្រប់គ្រង / អ្នកចាត់ការ (manager)", level: "HSK3" },
+            { c: "久", p: "jiǔ", k: "យូរ (long time)", level: "HSK3" },
+            { c: "旧", p: "jiù", k: "ចាស់ (old/used)", level: "HSK3" },
+            { c: "句子", p: "jùzi", k: "ប្រយោគ (sentence)", level: "HSK3" },
+            { c: "决定", p: "juédìng", k: "សម្រេចចិត្ត (decide)", level: "HSK3" },
+            { c: "可爱", p: "kě'ài", k: "គួរឱ្យស្រឡាញ់ (cute)", level: "HSK3" },
+            { c: "渴", p: "kě", k: "ស្រេកទឹក (thirsty)", level: "HSK3" },
+            { c: "刻", p: "kè", k: "១៥ នាទី (quarter hour)", level: "HSK3" },
+            { c: "客人", p: "kèrén", k: "ភ្ញៀវ (guest)", level: "HSK3" },
+            { c: "空调", p: "kōngtiáo", k: "ម៉ាស៊ីនត្រជាក់ (air conditioner)", level: "HSK3" },
+            { c: "口", p: "kǒu", k: "មាត់ (mouth)", level: "HSK3" },
+            { c: "哭", p: "kū", k: "យំ (cry)", level: "HSK3" },
+            { c: "裤子", p: "kùzi", k: "ខោ (trousers/pants)", level: "HSK3" },
+            { c: "块", p: "kuài", k: "ដុំ / ប្រាក់យួន (piece/yuan)", level: "HSK3" },
+            { c: "快", p: "kuài", k: "លឿន (fast)", level: "HSK3" },
+            { c: "快乐", p: "kuàilè", k: "សប្បាយ (happy)", level: "HSK3" },
+            { c: "蓝", p: "lán", k: "ពណ៌ខៀវ (blue)", level: "HSK3" },
+            { c: "老", p: "lǎo", k: "ចាស់ (old)", level: "HSK3" },
+            { c: "离开", p: "líkāi", k: "ចាកចេញ (leave)", level: "HSK3" },
+            { c: "礼物", p: "lǐwù", k: "កាដូ (gift)", level: "HSK3" },
+            { c: "历史", p: "lìshǐ", k: "ប្រវត្តិសាស្ត្រ (history)", level: "HSK3" },
+            { c: "脸", p: "liǎn", k: "ផ្ទៃមុខ (face)", level: "HSK3" },
+            { c: "练习", p: "liànxí", k: "លំហាត់ / អនុវត្ត (practice)", level: "HSK3" },
+            { c: "辆", p: "liàng", k: "គ្រឿង (measure word for vehicles)", level: "HSK3" },
+            { c: "聊天", p: "liáotiān", k: "ជជែកលេង (chat)", level: "HSK3" },
+            { c: "了解", p: "liǎojiě", k: "យល់ច្បាស់ (understand/comprehend)", level: "HSK3" },
+            { c: "邻居", p: "línjū", k: "អ្នកជិតខាង (neighbor)", level: "HSK3" },
+            { c: "留学", p: "liúxué", k: "សិក្សានៅបរទេស (study abroad)", level: "HSK3" },
+            { c: "楼", p: "lóu", k: "អគារ / ជាន់ (building/floor)", level: "HSK3" },
+            { c: "绿", p: "lǜ", k: "ពណ៌បៃតង (green)", level: "HSK3" },
+            { c: "马", p: "mǎ", k: "សេះ (horse)", level: "HSK3" },
+            { c: "马上", p: "mǎshàng", k: "ភ្លាមៗ (immediately)", level: "HSK3" },
+            { c: "满意", p: "mǎnyì", k: "ពេញចិត្ត (satisfied)", level: "HSK3" },
+            { c: "帽子", p: "màozi", k: "មួក (hat/cap)", level: "HSK3" },
+            { c: "米", p: "mǐ", k: "ម៉ែត្រ / អង្ករ (meter / rice)", level: "HSK3" },
+            { c: "面包", p: "miànbāo", k: "នំបុ័ង (bread)", level: "HSK3" },
+            { c: "明白", p: "míngbai", k: "យល់ច្បាស់ (understand)", level: "HSK3" },
+            { c: "拿", p: "ná", k: "កាន់ / យក (hold/take)", level: "HSK3" },
+            { c: "奶奶", p: "nǎinai", k: "ជីដូន (grandmother)", level: "HSK3" },
+            { c: "南", p: "nán", k: "ទិសខាងត្បូង (south)", level: "HSK3" },
+            { c: "难", p: "nán", k: "ពិបាក (difficult)", level: "HSK3" },
+            { c: "难过", p: "nánguò", k: "កើតទុក្ខ / ពិបាកចិត្ត (sad)", level: "HSK3" },
+            { c: "年级", p: "niánjí", k: "ថ្នាក់ / ឆ្នាំសិក្សា (grade)", level: "HSK3" },
+            { c: "年轻", p: "niánqīng", k: "ក្មេង (young)", level: "HSK3" },
+            { c: "鸟", p: "niǎo", k: "បក្សី / សត្វស្លាប (bird)", level: "HSK3" },
+            { c: "努力", p: "nǔlì", k: "ខិតខំប្រឹងប្រែង (hardworking)", level: "HSK3" },
+            { c: "爬山", p: "páshān", k: "ឡើងភ្នំ (climb mountain)", level: "HSK3" },
+            { c: "盘子", p: "pánzi", k: "ចានសំប៉ែត (plate/dish)", level: "HSK3" },
+            { c: "胖", p: "pàng", k: "ធាត់ (fat)", level: "HSK3" },
+            { c: "皮鞋", p: "píxié", k: "ស្បែកជើងស្បែក (leather shoes)", level: "HSK3" },
+            { c: "啤酒", p: "píjiǔ", k: "ស្រាបៀរ (beer)", level: "HSK3" },
+            { c: "普通话", p: "pǔtōnghuà", k: "ភាសាចិនកុកងឺ (Mandarin Chinese)", level: "HSK3" },
+            { c: "其实", p: "qíshí", k: "តាមពិតទៅ (actually)", level: "HSK3" },
+            { c: "其他", p: "qítā", k: "ផ្សេងទៀត (other)", level: "HSK3" },
+            { c: "奇怪", p: "qíguài", k: "ចម្លែក (strange)", level: "HSK3" },
+            { c: "骑", p: "qí", k: "ជិះ (ride)", level: "HSK3" },
+            { c: "起飞", p: "qǐfēi", k: "ហោះឡើង (take off)", level: "HSK3" },
+            { c: "清楚", p: "qīngchu", k: "ច្បាស់លាស់ (clear)", level: "HSK3" },
+            { c: "请假", p: "qǐngjià", k: "សុំច្បាប់ (ask for leave)", level: "HSK3" },
+            { c: "秋", p: "qiū", k: "រដូវស្លឹកឈើជ្រុះ (autumn)", level: "HSK3" },
+            { c: "裙子", p: "qúnzi", k: "សំពត់ (skirt)", level: "HSK3" },
+            { c: "然后", p: "ránhòu", k: "បន្ទាប់មក (then)", level: "HSK3" },
+            { c: "热情", p: "rèqíng", k: "រាក់ទាក់ (enthusiastic)", level: "HSK3" },
+            { c: "认为", p: "rènwéi", k: "គិតថា (think/believe)", level: "HSK3" },
+            { c: "认真", p: "rènzhēn", k: "យកចិត្តទុកដាក់ (serious)", level: "HSK3" },
+            { c: "容易", p: "róngyì", k: "ងាយស្រួល (easy)", level: "HSK3" },
+            { c: "如果", p: "rúguǒ", k: "ប្រសិនបើ (if)", level: "HSK3" },
+            { c: "伞", p: "sǎn", k: "ឆត្រ (umbrella)", level: "HSK3" },
+            { c: "上网", p: "shàngwǎng", k: "លេងអ៊ីនធឺណិត (surf the internet)", level: "HSK3" },
+            { c: "生气", p: "shēngqì", k: "ខឹង (angry)", level: "HSK3" },
+            { c: "声音", p: "shēngyīn", k: "សំឡេង (sound/voice)", level: "HSK3" },
+            { c: "使", p: "shǐ", k: "ធ្វើឱ្យ (make/cause)", level: "HSK3" },
+            { c: "世界", p: "shìjiè", k: "ពិភពលោក (world)", level: "HSK3" },
+            { c: "瘦", p: "shòu", k: "ស្គម (thin)", level: "HSK3" },
+            { c: "舒服", p: "shūfu", k: "ស្រួលខ្លួន (comfortable)", level: "HSK3" },
+            { c: "叔叔", p: "shūshu", k: "ពូ (uncle)", level: "HSK3" },
+            { c: "树", p: "shù", k: "ដើមឈើ (tree)", level: "HSK3" },
+            { c: "数学", p: "shùxué", k: "គណិតវិទ្យា (math)", level: "HSK3" },
+            { c: "刷牙", p: "shuāyá", k: "ដុសធ្មេញ (brush teeth)", level: "HSK3" },
+            { c: "双", p: "shuāng", k: "គូ (pair)", level: "HSK3" },
+            { c: "水平", p: "shuǐpíng", k: "កម្រិត (level/standard)", level: "HSK3" },
+            { c: "司机", p: "sījī", k: "អ្នកបើកបរ (driver)", level: "HSK3" },
+            { c: "太阳", p: "tàiyáng", k: "ព្រះអាទិត្យ (sun)", level: "HSK3" },
+            { c: "特别", p: "tèbié", k: "ពិសេស (special/very)", level: "HSK3" },
+            { c: "疼", p: "téng", k: "ឈឺ (pain/hurt)", level: "HSK3" },
+            { c: "提高", p: "tígāo", k: "លើកកម្ពស់ / កើនឡើង (improve)", level: "HSK3" },
+            { c: "体育", p: "tǐyù", k: "កាយសិក្សា (P.E./sports)", level: "HSK3" },
+            { c: "甜", p: "tián", k: "ផ្អែម (sweet)", level: "HSK3" },
+            { c: "条", p: "tiáo", k: "ខ្សែ / បន្ទាត់ (measure word for long things)", level: "HSK3" },
+            { c: "同事", p: "tóngshì", k: "មិត្តរួមការងារ (colleague)", level: "HSK3" },
+            { c: "同意", p: "tóngyì", k: "យល់ព្រម (agree)", level: "HSK3" },
+            { c: "头发", p: "tóufa", k: "សក់ (hair)", level: "HSK3" },
+            { c: "突然", p: "tūrán", k: "ភ្លាមៗ (suddenly)", level: "HSK3" },
+            { c: "图书馆", p: "túshūguǎn", k: "បណ្ណាល័យ (library)", level: "HSK3" },
+            { c: "腿", p: "tuǐ", k: "ជើង (leg)", level: "HSK3" },
+            { c: "完成", p: "wánchéng", k: "បង្ហើយ / បញ្ចប់ (complete)", level: "HSK3" },
+            { c: "碗", p: "wǎn", k: "ចានគោម (bowl)", level: "HSK3" },
+            { c: "万", p: "wàn", k: "ម៉ឺន (ten thousand)", level: "HSK3" },
+            { c: "忘记", p: "wàngjì", k: "ភ្លេច (forget)", level: "HSK3" },
+            { c: "为", p: "wèi", k: "ដើម្បី (for)", level: "HSK3" },
+            { c: "为了", p: "wèile", k: "ដើម្បី (in order to)", level: "HSK3" },
+            { c: "位", p: "wèi", k: "រូប / លោក (polite measure word for people)", level: "HSK3" },
+            { c: "文化", p: "wénhuà", k: "វប្បធម៌ (culture)", level: "HSK3" },
+            { c: "西", p: "xī", k: "ទិសខាងលិច (west)", level: "HSK3" },
+            { c: "习惯", p: "xíguàn", k: "ទម្លាប់ (habit/be used to)", level: "HSK3" },
+            { c: "洗手间", p: "xǐshǒujiān", k: "បន្ទប់ទឹក (restroom)", level: "HSK3" },
+            { c: "洗澡", p: "xǐzǎo", k: "ងូតទឹក (take bath)", level: "HSK3" },
+            { c: "夏", p: "xià", k: "រដូវក្តៅ (summer)", level: "HSK3" },
+            { c: "先", p: "xiān", k: "មុនគេ (first)", level: "HSK3" },
+            { c: "香蕉", p: "xiāngjiāo", k: "ចេក (banana)", level: "HSK3" },
+            { c: "相同", p: "xiāngtóng", k: "ដូចគ្នា (same)", level: "HSK3" },
+            { c: "相信", p: "xiāngxìn", k: "ជឿជាក់ (believe)", level: "HSK3" },
+            { c: "像", p: "xiàng", k: "ដូចជា (look like)", level: "HSK3" },
+            { c: "小心", p: "xiǎoxīn", k: "ប្រុងប្រយ័ត្ន (be careful)", level: "HSK3" },
+            { c: "校长", p: "xiàozhǎng", k: "នាយកសាលា (principal)", level: "HSK3" },
+            { c: "鞋", p: "xié", k: "ស្បែកជើង (shoes)", level: "HSK3" },
+            { c: "新闻", p: "xīnwén", k: "ព័ត៌មាន (news)", level: "HSK3" },
+            { c: "新鲜", p: "xīnxiān", k: "ស្រស់ (fresh)", level: "HSK3" },
+            { c: "信", p: "xìn", k: "សំបុត្រ (letter)", level: "HSK3" },
+            { c: "行李箱", p: "xínglixiāng", k: "វ៉ាលី (suitcase)", level: "HSK3" },
+            { c: "兴趣", p: "xìngqù", k: "ចំណាប់អារម្មណ៍ (interest)", level: "HSK3" },
+            { c: "熊猫", p: "xióngmāo", k: "ខ្លាឃ្មុំផេនដា (panda)", level: "HSK3" },
+            { c: "需要", p: "xūyào", k: "ត្រូវការ (need)", level: "HSK3" },
+            { c: "选择", p: "xuǎnzé", k: "ជ្រើសរើស (choose)", level: "HSK3" },
+            { c: "眼镜", p: "yǎnjìng", k: "វ៉ែនតា (glasses)", level: "HSK3" },
+            { c: "要求", p: "yāoqiú", k: "តម្រូវការ / សំណូមពរ (request/requirement)", level: "HSK3" },
+            { c: "爷爷", p: "yéye", k: "ជីតា (grandfather)", level: "HSK3" },
+            { c: "一定", p: "yídìng", k: "ប្រាកដជា (definitely)", level: "HSK3" },
+            { c: "一共", p: "yígòng", k: "សរុប (altogether)", level: "HSK3" },
+            { c: "一会儿", p: "yíhuìr", k: "មួយសន្ទុះ (a moment)", level: "HSK3" },
+            { c: "一样", p: "yíyàng", k: "ដូចគ្នា (same)", level: "HSK3" },
+            { c: "一直", p: "yìzhí", k: "រហូត / ត្រង់ (always/straight)", level: "HSK3" },
+            { c: "以前", p: "yǐqián", k: "ពីមុន (before)", level: "HSK3" },
+            { c: "音乐", p: "yīnyuè", k: "តន្ត្រី (music)", level: "HSK3" },
+            { c: "银行", p: "yínháng", k: "ធនាគារ (bank)", level: "HSK3" },
+            { c: "饮料", p: "yǐnliào", k: "ភេសជ្ជៈ (beverage/drink)", level: "HSK3" },
+            { c: "影响", p: "yǐngxiǎng", k: "ឥទ្ធិពល / ប៉ះពាល់ (influence/affect)", level: "HSK3" },
+            { c: "用", p: "yòng", k: "ប្រើ (use)", level: "HSK3" },
+            { c: "游戏", p: "yóuxì", k: "ហ្គេម (game)", level: "HSK3" },
+            { c: "有名", p: "yǒumíng", k: "ល្បីល្បាញ (famous)", level: "HSK3" },
+            { c: "又", p: "yòu", k: "ម្ដងទៀត (again)", level: "HSK3" },
+            { c: "遇到", p: "yùdào", k: "ជួបប្រទះ (encounter)", level: "HSK3" },
+            { c: "元", p: "yuán", k: "យួន (yuan - currency unit)", level: "HSK3" },
+            { c: "愿意", p: "yuànyì", k: "ស្ម័គ្រចិត្ត / ស្នើចង់ (willing)", level: "HSK3" },
+            { c: "月亮", p: "yuèliang", k: "ព្រះច័ន្ទ (moon)", level: "HSK3" },
+            { c: "越", p: "yuè", k: "កាន់តែ (the more...)", level: "HSK3" },
+            { c: "站", p: "zhàn", k: "ឈរ / ចំណត (stand / station)", level: "HSK3" },
+            { c: "张", p: "zhāng", k: "សន្លឹក (measure word for paper/flat objects)", level: "HSK3" },
+            { c: "照顾", p: "zhàogu", k: "ថែរក្សា (take care of)", level: "HSK3" },
+            { c: "照片", p: "zhàopiàn", k: "រូបថត (photo)", level: "HSK3" },
+            { c: "照相机", p: "zhàoxiàngjī", k: "ម៉ាស៊ីនថត (camera)", level: "HSK3" },
+            { c: "只", p: "zhī", k: "ក្បាល / គូ (measure word for animals)", level: "HSK3" },
+            { c: "只", p: "zhǐ", k: "គ្រាន់តែ (only)", level: "HSK3" },
+            { c: "中间", p: "zhōngjiān", k: "កណ្តាល (middle)", level: "HSK3" },
+            { c: "中文", p: "zhōngwén", k: "ភាសាចិន (Chinese language)", level: "HSK3" },
+            { c: "终于", p: "zhōngyú", k: "ចុងក្រោយបំផុត (finally)", level: "HSK3" },
+            { c: "种", p: "zhǒng", k: "ប្រភេទ (kind/type)", level: "HSK3" },
+            { c: "重要", p: "zhòngyào", k: "សំខាន់ (important)", level: "HSK3" },
+            { c: "周末", p: "zhōumò", k: "ចុងសប្តាហ៍ (weekend)", level: "HSK3" },
+            { c: "主要", p: "zhǔyào", k: "ចម្បង (main/major)", level: "HSK3" },
+            { c: "祝", p: "zhù", k: "ជូនពរ (wish)", level: "HSK3" },
+            { c: "注意", p: "zhùyì", k: "យកចិត្តទុកដាក់ (pay attention)", level: "HSK3" },
+            { c: "字典", p: "zìdiǎn", k: "វចនានុក្រម (dictionary)", level: "HSK3" },
+            { c: "自己", p: "zìjǐ", k: "ខ្លួនឯង (oneself)", level: "HSK3" },
+            { c: "总是", p: "zǒngshì", k: "តែងតែ (always)", level: "HSK3" },
+            { c: "嘴", p: "zuǐ", k: "មាត់ (mouth)", level: "HSK3" },
+            { c: "打算", p: "dǎsuan", k: "មានគម្រោង (plan)", level: "HSK3" },
+            { c: "作业", p: "zuòyè", k: "កិច្ចការផ្ទះ (homework)", level: "HSK3" },
+
+            // --- HSK 4 ---
+            { c: "爱情", p: "àiqíng", k: "សេចក្តីស្នេហា (love/romance)", level: "HSK4" },
+            { c: "安排", p: "ānpái", k: "ចាត់ចែង / រៀបចំ (arrange)", level: "HSK4" },
+            { c: "安全", p: "ānquán", k: "សុវត្ថិភាព (safe/safety)", level: "HSK4" },
+            { c: "按时", p: "ànshí", k: "ទាន់ពេលវេលា (on time)", level: "HSK4" },
+            { c: "按照", p: "ànzhào", k: "ផ្អែកតាម (according to)", level: "HSK4" },
+            { c: "百分之", p: "bǎifēnzhī", k: "ភាគរយ (percent)", level: "HSK4" },
+            { c: "棒", p: "bàng", k: "ពូកែ / អស្ចារ្យ (great/wonderful)", level: "HSK4" },
+            { c: "包子", p: "bāozi", k: "នំប៉ាវ (steamed bun)", level: "HSK4" },
+            { c: "保护", p: "bǎohù", k: "ការពារ (protect)", level: "HSK4" },
+            { c: "保证", p: "bǎozhèng", k: "ធានា (guarantee)", level: "HSK4" },
+            { c: "报名", p: "bàomíng", k: "ចុះឈ្មោះ (sign up/enroll)", level: "HSK4" },
+            { c: "抱", p: "bào", k: "ឱប (hug/hold in arms)", level: "HSK4" },
+            { c: "抱歉", p: "bàoqiàn", k: "សុំទោស (sorry/apologetic)", level: "HSK4" },
+            { c: "倍", p: "bèi", k: "ដង / បត់ (times/fold)", level: "HSK4" },
+            { c: "本来", p: "běnlái", k: "ដើមឡើយ (originally)", level: "HSK4" },
+            { c: "笨", p: "bèn", k: "ល្ងង់ (foolish/clumsy)", level: "HSK4" },
+            { c: "毕业", p: "bìyè", k: "បញ្ចប់ការសិក្សា (graduate)", level: "HSK4" },
+            { c: "遍", p: "biàn", k: "លើក / ជុំ (time / all over)", level: "HSK4" },
+            { c: "标准", p: "biāozhǔn", k: "ស្តង់ដារ (standard)", level: "HSK4" },
+            { c: "表格", p: "biǎogé", k: "តារាង / ក្រដាសបែបបទ (form/table)", level: "HSK4" },
+            { c: "表示", p: "biǎoshì", k: "បង្ហាញ / បញ្ជាក់ (express/indicate)", level: "HSK4" },
+            { c: "表演", p: "biǎoyǎn", k: "សម្តែង (perform)", level: "HSK4" },
+            { c: "表扬", p: "biǎoyáng", k: "សរសើរ (praise)", level: "HSK4" },
+            { c: "饼干", p: "bǐnggān", k: "នំស្រួយ (biscuit/cookie)", level: "HSK4" },
+            { c: "并且", p: "bìngqiě", k: "លើសពីនេះ (and also/furthermore)", level: "HSK4" },
+            { c: "博士", p: "bóshì", k: "បណ្ឌិត (PhD/Doctor)", level: "HSK4" },
+            { c: "不过", p: "búguò", k: "ប៉ុន្តែ (however)", level: "HSK4" },
+            { c: "不得不", p: "bùdébù", k: "ខានមិនបាន / ត្រូវតែ (have to)", level: "HSK4" },
+            { c: "不管", p: "bùguǎn", k: "ទោះបីជា (regardless of)", level: "HSK4" },
+            { c: "不仅", p: "bùjǐn", k: "មិនត្រឹមតែ (not only)", level: "HSK4" },
+            { c: "部分", p: "bùfen", k: "ផ្នែក (part/section)", level: "HSK4" },
+            { c: "擦", p: "cā", k: "ជូត (wipe/rub)", level: "HSK4" },
+            { c: "猜", p: "cāi", k: "ទាយ (guess)", level: "HSK4" },
+            { c: "材料", p: "cáiliào", k: "សម្ភារៈ / ឯកសារ (material)", level: "HSK4" },
+            { c: "参观", p: "cānguān", k: "ទស្សនា (visit/tour)", level: "HSK4" },
+            { c: "餐厅", p: "cāntīng", k: "ភោជនីយដ្ឋាន (restaurant)", level: "HSK4" },
+            { c: "差不多", p: "chàbuduō", k: "ប្រហាក់ប្រហែល (almost/nearly)", level: "HSK4" },
+            { c: "长城", p: "chángchéng", k: "មហាកំផែងចិន (Great Wall)", level: "HSK4" },
+            { c: "长江", p: "chángjiāng", k: "ទន្លេយ៉ង់សេ (Yangtze River)", level: "HSK4" },
+            { c: "尝", p: "cháng", k: "ភ្លក់ (taste)", level: "HSK4" },
+            { c: "场", p: "chǎng", k: "ទីលាន / ជុំ (field/measure word for games)", level: "HSK4" },
+            { c: "超过", p: "chāoguò", k: "លើសពី (exceed/surpass)", level: "HSK4" },
+            { c: "成功", p: "chénggōng", k: "ជោគជ័យ (succeed/success)", level: "HSK4" },
+            { c: "成熟", p: "chéngshú", k: "ទុំ / ធំដឹងក្តី (mature/ripe)", level: "HSK4" },
+            { c: "成为", p: "chéngwéi", k: "ក្លាយជា (become)", level: "HSK4" },
+            { c: "诚实", p: "chéngshí", k: "ស្មោះត្រង់ (honest)", level: "HSK4" },
+            { c: "乘坐", p: "chéngzuò", k: "ជិះ (ride/take vehicle)", level: "HSK4" },
+            { c: "吃惊", p: "chījīng", k: "ភ្ញាក់ផ្អើល (surprised/shocked)", level: "HSK4" },
+            { c: "重新", p: "chóngxīn", k: "សារជាថ្មី (again/anew)", level: "HSK4" },
+            { c: "抽烟", p: "chōuyān", k: "ជក់បារី (smoke cigarette)", level: "HSK4" },
+            { c: "出差", p: "chūchāi", k: "ទៅបេសកកម្ម (business trip)", level: "HSK4" },
+            { c: "出发", p: "chūfā", k: "ចេញដំណើរ (set off/depart)", level: "HSK4" },
+            { c: "出生", p: "chūshēng", k: "កើត (be born)", level: "HSK4" },
+            { c: "厨房", p: "chúfáng", k: "ផ្ទះបាយ (kitchen)", level: "HSK4" },
+            { c: "传真", p: "chuánzhēn", k: "សារទូរសារ (fax)", level: "HSK4" },
+            { c: "窗户", p: "chuānghu", k: "បង្អួច (window)", level: "HSK4" },
+            { c: "词语", p: "cíyǔ", k: "ពាក្យពេចន៍ (words/terms)", level: "HSK4" },
+            { c: "从来", p: "cónglái", k: "តាំងពីដើមមក (always/ever)", level: "HSK4" },
+            { c: "粗心", p: "cūxīn", k: "ប្រហែស (careless)", level: "HSK4" },
+            { c: "存", p: "cún", k: "ផ្ញើ / សន្សំ (save/store)", level: "HSK4" },
+            { c: "错误", p: "cuòwù", k: "កំហុស (mistake/error)", level: "HSK4" },
+            { c: "答案", p: "dá'àn", k: "ចម្លើយ (answer)", level: "HSK4" },
+            { c: "打扮", p: "dǎban", k: "រៀបចំខ្លួន (dress up)", level: "HSK4" },
+            { c: "打扰", p: "dǎrǎo", k: "រំខាន (disturb)", level: "HSK4" },
+            { c: "打印", p: "dǎyìn", k: "បោះពុម្ព (print)", level: "HSK4" },
+            { c: "打折", p: "dǎzhé", k: "បញ្ចុះតម្លៃ (discount)", level: "HSK4" },
+            { c: "打针", p: "dǎzhēn", k: "ចាក់ថ្នាំ (give injection)", level: "HSK4" },
+            { c: "大概", p: "dàgài", k: "ប្រហែលជា (probably/roughly)", level: "HSK4" },
+            { c: "大使馆", p: "dàshǐguǎn", k: "ស្ថានទូត (embassy)", level: "HSK4" },
+            { c: "大约", p: "dàyuē", k: "ប្រមាណ (about/approximately)", level: "HSK4" },
+            { c: "戴", p: "dài", k: "ពាក់ (wear accessories)", level: "HSK4" },
+            { c: "代表", p: "dàibiǎo", k: "តំណាង (represent/delegate)", level: "HSK4" },
+            { c: "代替", p: "dàitì", k: "ជំនួស (replace)", level: "HSK4" },
+            { c: "大夫", p: "dàifu", k: "គ្រូពេទ្យ (doctor)", level: "HSK4" },
+            { c: "当", p: "dāng", k: "ធ្វើជា / នៅពេល (act as / when)", level: "HSK4" },
+            { c: "当地", p: "dāngdì", k: "ក្នុងស្រុក / តំបន់ (local)", level: "HSK4" },
+            { c: "当时", p: "dāngshí", k: "ពេលនោះ (at that time)", level: "HSK4" },
+            { c: "刀", p: "dāo", k: "កាំបិត (knife)", level: "HSK4" },
+            { c: "导游", p: "dǎoyóu", k: "មគ្គុទ្ទេសក៍ទេសចរណ៍ (tour guide)", level: "HSK4" },
+            { c: "到处", p: "dàochù", k: "គ្រប់ទីកន្លែង (everywhere)", level: "HSK4" },
+            { c: "到底", p: "dàodǐ", k: "ចុងក្រោយ / ឱ្យប្រាកដ (in the end / on earth)", level: "HSK4" },
+            { c: "道歉", p: "dàoqiàn", k: "សុំទោស (apologize)", level: "HSK4" },
+            { c: "得意", p: "déyì", k: "អួតអាង / ពេញចិត្ត (proud of oneself)", level: "HSK4" },
+            { c: "得", p: "děi", k: "ត្រូវតែ (must)", level: "HSK4" },
+            { c: "登机牌", p: "dēngjīpái", k: "សំបុត្រឡើងយន្តហោះ (boarding pass)", level: "HSK4" },
+            { c: "等", p: "děng", k: "និងផ្សេងៗ (etc.)", level: "HSK4" },
+            { c: "低", p: "dī", k: "ទាប (low)", level: "HSK4" },
+            { c: "底", p: "dǐ", k: "បាត / ចុង (bottom/end)", level: "HSK4" },
+            { c: "地点", p: "dìdiǎn", k: "ទីតាំង (location)", level: "HSK4" },
+            { c: "地球", p: "dìqiú", k: "ផែនដី (Earth)", level: "HSK4" },
+            { c: "地址", p: "dìzhǐ", k: "អាសយដ្ឋាន (address)", level: "HSK4" },
+            { c: "调查", p: "diàochá", k: "ស្រាវជ្រាវ (investigate/survey)", level: "HSK4" },
+            { c: "掉", p: "diào", k: "ជ្រោះ / ធ្លាក់ (fall/drop)", level: "HSK4" },
+            { c: "丢", p: "diū", k: "បាត់ / បោះចោល (lose/throw away)", level: "HSK4" },
+            { c: "动作", p: "dòngzuò", k: "កាយវិការ / ចលនា (action/movement)", level: "HSK4" },
+            { c: "堵车", p: "dǔchē", k: "ស្ទះចរាចរណ៍ (traffic jam)", level: "HSK4" },
+            { c: "肚子", p: "dùzi", k: "ពោះ (belly/stomach)", level: "HSK4" },
+            { c: "短信", p: "duǎnxìn", k: "សារ SMS (text message)", level: "HSK4" },
+            { c: "对话", p: "duìhuà", k: "កិច្ចសន្ទនា (dialogue)", level: "HSK4" },
+            { c: "对面", p: "duìmiàn", k: "ខាងឈម / ផ្ទុយមុខ (opposite side)", level: "HSK4" },
+            { c: "儿童", p: "értóng", k: "កុមារ (children)", level: "HSK4" },
+            { c: "法律", p: "fǎlǜ", k: "ច្បាប់ (law)", level: "HSK4" },
+            { c: "翻译", p: "fānyì", k: "បកប្រែ / អ្នកបកប្រែ (translate/translator)", level: "HSK4" },
+            { c: "烦恼", p: "fánnǎo", k: "កង្វល់ (worry/trouble)", level: "HSK4" },
+            { c: "反对", p: "fǎnduì", k: "ប្រឆាំង (oppose)", level: "HSK4" },
+            { c: "反映", p: "fǎnyìng", k: "ឆ្លុះបញ្ចាំង (reflect)", level: "HSK4" },
+            { c: "范围", p: "fànwéi", k: "វិសាលភាព / ជួរ (scope/range)", level: "HSK4" },
+            { c: "方法", p: "fāngfǎ", k: "វិធីសាស្ត្រ (method)", level: "HSK4" },
+            { c: "方面", p: "fāngmiàn", k: "ទិដ្ឋភាព / ផ្នែក (aspect)", level: "HSK4" },
+            { c: "方向", p: "fāngxiàng", k: "ទិសដៅ (direction)", level: "HSK4" },
+            { c: "房东", p: "fángdōng", k: "ម្ចាស់ផ្ទះ (landlord)", level: "HSK4" },
+            { c: "放弃", p: "fàngqì", k: "បោះបង់ (give up)", level: "HSK4" },
+            { c: "放暑假", p: "fàng shǔjià", k: "សម្រាកវិស្សមកាលរដូវក្តៅ (summer vacation)", level: "HSK4" },
+            { c: "费用", p: "fèiyòng", k: "ចំណាយ / ថ្លៃសេវា (expense/fee)", level: "HSK4" },
+            { c: "份", p: "fèn", k: "ចំណែក / ច្បាប់ (portion/share)", level: "HSK4" },
+            { c: "丰富", p: "fēngfù", k: "សំបូរបែប (abundant/rich)", level: "HSK4" },
+            { c: "否则", p: "fǒuzé", k: "បើមិនដូច្នោះទេ (otherwise)", level: "HSK4" },
+            { c: "符合", p: "fúhé", k: "ស្របតាម (accord with)", level: "HSK4" },
+            { c: "富", p: "fù", k: "មាន (rich)", level: "HSK4" },
+            { c: "父亲", p: "fùqīn", k: "ឪពុក (father)", level: "HSK4" },
+            { c: "付款", p: "fùkuǎn", k: "ទូទាត់ប្រាក់ (pay money)", level: "HSK4" },
+            { c: "复印", p: "fùyìn", k: "ថតចម្លង (photocopy)", level: "HSK4" },
+            { c: "复杂", p: "fùzá", k: "សមុគ្រស្មាញ (complex)", level: "HSK4" },
+            { c: "负责", p: "fùzé", k: "ទទួលខុសត្រូវ (be responsible)", level: "HSK4" },
+            { c: "改变", p: "gǎibiàn", k: "ផ្លាស់ប្តូរ (change)", level: "HSK4" },
+            { c: "干杯", p: "gānbēi", k: "លើកកែវ / ជល់កែវ (cheers!)", level: "HSK4" },
+            { c: "干燥", p: "gānzào", k: "ស្ងួត (dry)", level: "HSK4" },
+            { c: "感动", p: "gǎndòng", k: "រំភើប (moved/touched)", level: "HSK4" },
+            { c: "感觉", p: "gǎnjué", k: "អារម្មណ៍ (feeling/sense)", level: "HSK4" },
+            { c: "感情", p: "gǎnqíng", k: "មនោសញ្ចេតនា (emotion/feeling)", level: "HSK4" },
+            { c: "感谢", p: "gǎnxiè", k: "ថ្លែងអំណរគុណ (thank/express gratitude)", level: "HSK4" },
+            { c: "干", p: "gàn", k: "ធ្វើ (do/work)", level: "HSK4" },
+            { c: "高级", p: "gāojí", k: "ថ្នាក់ខ្ពស់ / ជឿនលឿន (advanced/high-grade)", level: "HSK4" },
+            { c: "高速公路", p: "gāosù gōnglù", k: "ផ្លូវល្បឿនលឿន (highway)", level: "HSK4" },
+            { c: "各", p: "gè", k: "នីមួយៗ (each/every)", level: "HSK4" },
+            { c: "工资", p: "gōngzī", k: "ប្រាក់ខែ (salary/wages)", level: "HSK4" },
+            { c: "公里", p: "gōnglǐ", k: "គីឡូម៉ែត្រ (kilometer)", level: "HSK4" },
+            { c: "功夫", p: "gōngfu", k: "ក្បាច់គុន (Kung Fu)", level: "HSK4" },
+            { c: "共同", p: "gòngtóng", k: "រួមគ្នា (common/together)", level: "HSK4" },
+            { c: "购物", p: "gòuwù", k: "ទិញទំនិញ (shopping)", level: "HSK4" },
+            { c: "够", p: "gòu", k: "គ្រប់គ្រាន់ (enough)", level: "HSK4" },
+            { c: "估计", p: "gūjì", k: "ប៉ាន់ស្មាន (estimate)", level: "HSK4" },
+            { c: "鼓励", p: "gǔlì", k: "លើកទឹកចិត្ត (encourage)", level: "HSK4" },
+            { c: "故意", p: "gùyì", k: "ចេតនា / intentionally (on purpose)", level: "HSK4" },
+            { c: "顾客", p: "gùkè", k: "អតិថិជន (customer)", level: "HSK4" },
+            { c: "关键", p: "guānjiàn", k: "ចំណុចសំខាន់ (key/crucial)", level: "HSK4" },
+            { c: "观众", p: "guānzhòng", k: "ទស្សនិកជន (audience)", level: "HSK4" },
+            { c: "管理", p: "guǎnlǐ", k: "គ្រប់គ្រង (manage)", level: "HSK4" },
+            { c: "光", p: "guāng", k: "ពន្លឺ / អស់រលីង (light / solely / empty)", level: "HSK4" },
+            { c: "广播", p: "guǎngbō", k: "ការផ្សាយសម្លេង (broadcast)", level: "HSK4" },
+            { c: "广告", p: "guǎnggào", k: "ពាណិជ្ជកម្ម (advertisement)", level: "HSK4" },
+            { c: "逛", p: "guàng", k: "ដើរលេង (stroll/roam)", level: "HSK4" },
+            { c: "规定", p: "guīdìng", k: "បទបញ្ញត្តិ / បទបញ្ជា (regulation/rule)", level: "HSK4" },
+            { c: "国际", p: "guójì", k: "អន្តរជាតិ (international)", level: "HSK4" },
+            { c: "果汁", p: "guǒzhī", k: "ទឹកផ្លែឈើ (fruit juice)", level: "HSK4" },
+            { c: "过程", p: "guòchéng", k: "ដំណើរការ (process)", level: "HSK4" },
+            { c: "海洋", p: "hǎiyáng", k: "មហាសមុទ្រ (ocean)", level: "HSK4" },
+            { c: "害羞", p: "hàixiū", k: "អៀន (shy)", level: "HSK4" },
+            { c: "寒假", p: "hánjià", k: "វិស្សមកាលរដូវរងា (winter vacation)", level: "HSK4" },
+            { c: "汗", p: "hàn", k: "ញើស (sweat)", level: "HSK4" },
+            { c: "航班", p: "hángbān", k: "ជើងហោះហើរ (flight)", level: "HSK4" },
+            { c: "好处", p: "hǎochu", k: "ផលប្រយោជន៍ (advantage/benefit)", level: "HSK4" },
+            { c: "好像", p: "hǎoxiàng", k: "ហាក់ដូចជា (seem/like)", level: "HSK4" },
+            { c: "号码", p: "hàomǎ", k: "លេខ (number)", level: "HSK4" },
+            { c: "合格", p: "hégé", k: "ជាប់ស្តង់ដារ (qualified)", level: "HSK4" },
+            { c: "合适", p: "héshì", k: "សមរម្យ (suitable)", level: "HSK4" },
+            { c: "盒子", p: "hézi", k: "ប្រអប់ (box)", level: "HSK4" },
+            { c: "后悔", p: "hòuhuǐ", k: "ស្តាយក្រោយ (regret)", level: "HSK4" },
+            { c: "厚", p: "hòu", k: "ក្រាស់ (thick)", level: "HSK4" },
+            { c: "互联网", p: "hùliánwǎng", k: "អ៊ីនធឺណិត (internet)", level: "HSK4" },
+            { c: "互相", p: "hùxiāng", k: "ទៅវិញទៅមក (mutually/each other)", level: "HSK4" },
+            { c: "护士", p: "hùshi", k: "គិលានុបដ្ឋាយិកា / គ្រូពេទ្យស្រី (nurse)", level: "HSK4" },
+            { c: "怀疑", p: "huáiyí", k: "សង្ស័យ (doubt/suspect)", level: "HSK4" },
+            { c: "回忆", p: "huíyì", k: "ការចងចាំ (memory/recall)", level: "HSK4" },
+            { c: "活动", p: "huódòng", k: "សកម្មភាព (activity)", level: "HSK4" },
+            { c: "活泼", p: "huópo", k: "រស់រវើក (lively)", level: "HSK4" },
+            { c: "火", p: "huǒ", k: "ភ្លើង (fire)", level: "HSK4" },
+            { c: "获得", p: "huòdé", k: "ទទួលបាន (obtain/gain)", level: "HSK4" },
+            { c: "积极", p: "jījí", k: "សកម្ម / ក្លៀវក្លា (positive/active)", level: "HSK4" },
+            { c: "积累", p: "jīlěi", k: "សន្សំ / ប្រមូលផ្តុំ (accumulate)", level: "HSK4" },
+            { c: "基础", p: "jīchǔ", k: "មូលដ្ឋាន (foundation/base)", level: "HSK4" },
+            { c: "激动", p: "jīdòng", k: "រំភើបញាប់ញ័រ (excited)", level: "HSK4" },
+            { c: "及时", p: "jíshí", k: "ទាន់ពេលវេលា (in time)", level: "HSK4" },
+            { c: "即使", p: "jíshǐ", k: "ទោះបីជា...ក៏ដោយ (even if)", level: "HSK4" },
+            { c: "计划", p: "jìhuà", k: "ផែនការ (plan)", level: "HSK4" },
+            { c: "记者", p: "jìzhě", k: "អ្នកសារព័ត៌មាន (journalist)", level: "HSK4" },
+            { c: "技术", p: "jìshù", k: "បច្ចេកវិទ្យា (technology/skill)", level: "HSK4" },
+            { c: "既然", p: "jìrán", k: "ក្នុងពេល / ដោយសារ (since/now that)", level: "HSK4" },
+            { c: "继续", p: "jìxù", k: "បន្ត (continue)", level: "HSK4" },
+            { c: "寄", p: "jì", k: "ផ្ញើ (mail/send)", level: "HSK4" },
+            { c: "加班", p: "jiābān", k: "ធ្វើការថែមម៉ោង (overtime)", level: "HSK4" },
+            { c: "加油站", p: "jiāyóuzhàn", k: "ការាស់សាំង (gas station)", level: "HSK4" },
+            { c: "家具", p: "jiājù", k: "គ្រឿងសង្ហារិម (furniture)", level: "HSK4" },
+            { c: "假", p: "jiǎ", k: "ក្លែងក្លាយ (fake/false)", level: "HSK4" },
+            { c: "价格", p: "jiàgé", k: "តម្លៃ (price)", level: "HSK4" },
+            { c: "坚持", p: "jiānchí", k: "ប្រកាន់ខ្ជាប់ (persist/insist)", level: "HSK4" },
+            { c: "减肥", p: "jiǎnféi", k: "សម្រកទម្ងន់ (lose weight)", level: "HSK4" },
+            { c: "减少", p: "jiǎnshǎo", k: "កាត់បន្ថយ (reduce)", level: "HSK4" },
+            { c: "建议", p: "jiànyì", k: "អនុសាសន៍ / ផ្តល់យោបល់ (suggest/recommend)", level: "HSK4" },
+            { c: "将来", p: "jiānglái", k: "អនាគត (future)", level: "HSK4" },
+            { c: "奖金", p: "jiǎngjīn", k: "ប្រាក់រង្វាន់ (bonus)", level: "HSK4" },
+            { c: "降低", p: "jiàngdī", k: "បន្ធូរបន្ថយ / ធ្លាក់ចុះ (lower/reduce)", level: "HSK4" },
+            { c: "交", p: "jiāo", k: "ប្រគល់ / ទំនាក់ទំនង (hand over / pay)", level: "HSK4" },
+            { c: "交流", p: "jiāoliú", k: "ការផ្លាស់ប្តូរយោបល់ (exchange/communicate)", level: "HSK4" },
+            { c: "交通", p: "jiāotōng", k: "ចរាចរណ៍ (traffic/transport)", level: "HSK4" },
+            { c: "骄傲", p: "jiāo'ào", k: "មានមោទនភាព / ឆ្មើងឆ្មៃ (proud/arrogant)", level: "HSK4" },
+            { c: "饺子", p: "jiǎozi", k: "នំប៉ាវដុត/ចំហុយ (dumpling)", level: "HSK4" },
+            { c: "教授", p: "jiàoshòu", k: "សាស្ត្រាចារ្យ (professor)", level: "HSK4" },
+            { c: "教育", p: "jiàoyù", k: "ការអប់រំ (education)", level: "HSK4" },
+            { c: "接受", p: "jiēshòu", k: "ទទួលយក (accept)", level: "HSK4" },
+            { c: "结果", p: "jiéguǒ", k: "លទ្ធផល (result)", level: "HSK4" },
+            { c: "节约", p: "jiéyuē", k: "សំចៃ (economize/save)", level: "HSK4" },
+            { c: "解释", p: "jiěshì", k: "ពន្យល់ (explain)", level: "HSK4" },
+            { c: "尽管", p: "jǐnguǎn", k: "ទោះបីជា (although)", level: "HSK4" },
+            { c: "紧张", p: "jǐnzhāng", k: "តានតឹង / ភ័យ (nervous)", level: "HSK4" },
+            { c: "进行", p: "jìnxíng", k: "ប្រព្រឹត្តទៅ (conduct/carry out)", level: "HSK4" },
+            { c: "禁止", p: "jìnzhǐ", k: "ហាមឃាត់ (prohibit/forbid)", level: "HSK4" },
+            { c: "精彩", p: "jīngcǎi", k: "អស្ចារ្យ (splendid/brilliant)", level: "HSK4" },
+            { c: "精神", p: "jīngshén", k: "ស្មារតី / ថាមពល (spirit/mind)", level: "HSK4" },
+            { c: "经济", p: "jīngjì", k: "សេដ្ឋកិច្ច (economy)", level: "HSK4" },
+            { c: "经验", p: "jīngyàn", k: "បទពិសោធន៍ (experience)", level: "HSK4" },
+            { c: "京剧", p: "jīngjù", k: "ល្ខោនអូប៉េរ៉ាប៉េកាំង (Beijing Opera)", level: "HSK4" },
+            { c: "警察", p: "jǐngchá", k: "ប៉ូលីស (police)", level: "HSK4" },
+            { c: "竟然", p: "jìngrán", k: "ស្មានមិនដល់ (unexpectedly)", level: "HSK4" },
+            { c: "竞争", p: "jìngzhēng", k: "ការប្រកួតប្រជែង (compete)", level: "HSK4" },
+            { c: "镜子", p: "jìngzi", k: "កញ្ចក់ (mirror)", level: "HSK4" },
+            { c: "究竟", p: "jiūjìng", k: "ឱ្យប្រាកដ (after all / exactly)", level: "HSK4" },
+            { c: "举办", p: "jǔbàn", k: "រៀបចំធ្វើ (hold event)", level: "HSK4" },
+            { c: "拒绝", p: "jùjué", k: "បដិសេធ (refuse/reject)", level: "HSK4" },
+            { c: "距离", p: "jùlí", k: "ចម្ងាយ (distance)", level: "HSK4" },
+            { c: "开玩笑", p: "kāi wánxiào", k: "និយាយលេង (make a joke)", level: "HSK4" },
+            { c: "看法", p: "kànfǎ", k: "ទស្សនៈ / គំនិត (opinion/view)", level: "HSK4" },
+            { c: "考虑", p: "kǎolǜ", k: "ពិចារណា (consider)", level: "HSK4" },
+            { c: "棵", p: "kē", k: "ដើម (measure word for trees)", level: "HSK4" },
+            { c: "科学", p: "kēxué", k: "វិទ្យាសាស្ត្រ (science)", level: "HSK4" },
+            { c: "咳嗽", p: "késou", k: "ក្អក (cough)", level: "HSK4" },
+            { c: "可怜", p: "kělián", k: "គួរឱ្យអាណិត (pitiful)", level: "HSK4" },
+            { c: "可是", p: "kěshì", k: "ប៉ុន្តែ (but/however)", level: "HSK4" },
+            { c: "可惜", p: "kěxī", k: "គួរឱ្យស្តាយ (pity/unfortunate)", level: "HSK4" },
+            { c: "客厅", p: "kètīng", k: "បន្ទប់ទទួលភ្ញៀវ (living room)", level: "HSK4" },
+            { c: "肯定", p: "kěndìng", k: "ប្រាកដប្រជា (definitely)", level: "HSK4" },
+            { c: "空", p: "kōng", k: "ទទេ (empty)", level: "HSK4" },
+            { c: "空气", p: "kōngqì", k: "ខ្យល់ / អាកាស (air)", level: "HSK4" },
+            { c: "恐龙", p: "kǒnglóng", k: "ដាយណូស័រ (dinosaur)", level: "HSK4" },
+            { c: "恐慌", p: "kǒnghuāng", k: "ភ័យស្លន់ស្លោ (panic)", level: "HSK4" },
+            { c: "苦", p: "kǔ", k: "ល្វីង / លំបាក (bitter/hardship)", level: "HSK4" },
+            { c: "矿泉水", p: "kuàngquánshuǐ", k: "ទឹកបរិសុទ្ធ (mineral water)", level: "HSK4" },
+            { c: "困", p: "kùn", k: "ងងុយគេង (sleepy)", level: "HSK4" },
+            { c: "困难", p: "kùnnan", k: "ការលំបាក (difficulty)", level: "HSK4" },
+            { c: "垃圾桶", p: "lājītǒng", k: "ធុងសំរាម (trash can)", level: "HSK4" },
+            { c: "拉", p: "lā", k: "ទាញ (pull)", level: "HSK4" },
+            { c: "辣", p: "là", k: "ហិរ (spicy)", level: "HSK4" },
+            { c: "来不及", p: "láibují", k: "មិនទាន់ពេលវេលា (not enough time)", level: "HSK4" },
+            { c: "来得及", p: "láidejí", k: "ទាន់ពេលវេលា (have enough time)", level: "HSK4" },
+            { c: "来自", p: "láizì", k: "មកពី (come from)", level: "HSK4" },
+            { c: "懒", p: "lǎn", k: "ខ្ជិល (lazy)", level: "HSK4" },
+            { c: "浪费", p: "làngfèi", k: "ខ្ជះខ្ជាយ (waste)", level: "HSK4" },
+            { c: "浪漫", p: "làngmàn", k: "រ៉ូមែនទិក (romantic)", level: "HSK4" },
+            { c: "老虎", p: "lǎohǔ", k: "ខ្លា (tiger)", level: "HSK4" },
+            { c: "冷静", p: "lěngjìng", k: "ស្ងប់អារម្មណ៍ (calm down)", level: "HSK4" },
+            { c: "礼貌", p: "lǐmào", k: "សុជីវធម៌ (polite/courtesy)", level: "HSK4" },
+            { c: "理发", p: "lǐfà", k: "កាត់សក់ (haircut)", level: "HSK4" },
+            { c: "理解", p: "lǐjiě", k: "យល់ចិត្ត (comprehend/understand)", level: "HSK4" },
+            { c: "理想", p: "lǐxiǎng", k: "ក្តីស្រមៃ (ideal/dream)", level: "HSK4" },
+            { c: "力气", p: "lìqi", k: "កម្លាំង (physical strength)", level: "HSK4" },
+            { c: "厉害", p: "lìhai", k: "ពូកែ / ខ្លាំងក្លា (awesome/severe)", level: "HSK4" },
+            { c: "俩", p: "liǎ", k: "ពីរនាក់ (two people)", level: "HSK4" },
+            { c: "连", p: "lián", k: "សូម្បីតែ (even)", level: "HSK4" },
+            { c: "联系", p: "liánxì", k: "ទាក់ទង (contact)", level: "HSK4" },
+            { c: "凉快", p: "liángkuai", k: "ត្រជាក់ស្រួល (cool weather)", level: "HSK4" },
+            { c: "零钱", p: "língqián", k: "លុយរាយ (small change)", level: "HSK4" },
+            { c: "另外", p: "lìngwài", k: "លើសពីនេះ / ផ្សេងទៀត (another/furthermore)", level: "HSK4" },
+            { c: "留", p: "liú", k: "រង់ចាំ / រក្សាទុក (stay/keep)", level: "HSK4" },
+            { c: "流利", p: "liúlì", k: "រលូន / ស្ទាត់ជំនាញ (fluent)", level: "HSK4" },
+            { c: "流行", p: "liúxíng", k: "ពេញនិយម (popular)", level: "HSK4" },
+            { c: "旅行", p: "lǚxíng", k: "ធ្វើដំណើរទេសចរណ៍ (travel)", level: "HSK4" },
+            { c: "乱", p: "luàn", k: "រញ៉េរញ៉ៃ (messy)", level: "HSK4" },
+            { c: "律师", p: "lǜshī", k: "មេធាវី (lawyer)", level: "HSK4" },
+            { c: "麻烦", p: "máfan", k: "រំខាន / ពិបាក (troublesome)", level: "HSK4" },
+            { c: "马虎", p: "mǎhu", k: "ធ្វើការខ្ជីខ្ជា (careless)", level: "HSK4" },
+            { c: "满", p: "mǎn", k: "ពេញ (full)", level: "HSK4" },
+            { c: "毛", p: "máo", k: "រោម / កាក់ (hair/dime)", level: "HSK4" },
+            { c: "毛巾", p: "máojīn", k: "កន្សែង (towel)", level: "HSK4" },
+            { c: "美丽", p: "měilì", k: "ស្រស់ស្អាត (beautiful)", level: "HSK4" },
+            { c: "梦", p: "mèng", k: "យល់សប្តិ (dream)", level: "HSK4" },
+            { c: "密码", p: "mìmǎ", k: "លេខកូដសម្ងាត់ (password)", level: "HSK4" },
+            { c: "免费", p: "miǎnfèi", k: "ឥតគិតថ្លៃ (free of charge)", level: "HSK4" },
+            { c: "民族", p: "mínzú", k: "ជនជាតិ (ethnic group/nation)", level: "HSK4" },
+            { c: "母亲", p: "mǔqīn", k: "ម្តាយ (mother)", level: "HSK4" },
+            { c: "目的", p: "mùdì", k: "គោលបំណង (purpose/goal)", level: "HSK4" },
+            { c: "耐心", p: "nàixīn", k: "ការអត់ធ្មត់ (patience)", level: "HSK4" },
+            { c: "难道", p: "nándào", k: "តើ...មែនទេ? (rhetorical question indicator)", level: "HSK4" },
+            { c: "难受", p: "nánshòu", k: "ពិបាកក្នុងខ្លួន (uncomfortable/sad)", level: "HSK4" },
+            { c: "内", p: "nèi", k: "ខាងក្នុង (inside/within)", level: "HSK4" },
+            { c: "内容", p: "nèiróng", k: "អត្ថន័យ / ខ្លឹមសារ (content)", level: "HSK4" },
+            { c: "能力", p: "nénglì", k: "សមត្ថភាព (ability/capability)", level: "HSK4" },
+            { c: "年龄", p: "niánlíng", k: "អាយុ (age)", level: "HSK4" },
+            { c: "农村", p: "nóngcūn", k: "ជនបទ (countryside/rural area)", level: "HSK4" },
+            { c: "弄", p: "nòng", k: "ធ្វើ (do/make/manage)", level: "HSK4" },
+            { c: "暖和", p: "nuǎnhuo", k: "កក់ក្តៅ (warm)", level: "HSK4" },
+            { c: "偶尔", p: "ǒu'ěr", k: "ម្តងម្កាល (occasionally)", level: "HSK4" },
+            { c: "排列", p: "páiliè", k: "រៀបតាមលំដាប់ (arrange/rank)", level: "HSK4" },
+            { c: "判断", p: "pànduàn", k: "វិនិច្ឆ័យ (judge/determine)", level: "HSK4" },
+            { c: "陪", p: "péi", k: "កំដរ (accompany)", level: "HSK4" },
+            { c: "批评", p: "pīpíng", k: "រិះគន់ (criticize)", level: "HSK4" },
+            { c: "皮肤", p: "pífū", k: "ស្បែក (skin)", level: "HSK4" },
+            { c: "脾气", p: "píqi", k: "ចរិត / កំហឹង (temper)", level: "HSK4" },
+            { c: "篇", p: "piān", k: "បទ / អត្ថបទ (measure word for articles)", level: "HSK4" },
+            { c: "乒乓球", p: "pīngpāngqiú", k: "វាយកូនឃ្លីលើតុ (ping-pong)", level: "HSK4" },
+            { c: "平时", p: "píngshí", k: "ធម្មតា (normally)", level: "HSK4" },
+            { c: "瓶子", p: "píngzi", k: "ដប (bottle)", level: "HSK4" },
+            { c: "破", p: "pò", k: "ធ្លុះ / រហែក / បែក (broken/damaged)", level: "HSK4" },
+            { c: "葡萄", p: "pútao", k: "ទំពាំងបាយជូរ (grape)", level: "HSK4" },
+            { c: "普遍", p: "pǔbiàn", k: "ទូទៅ (universal/widespread)", level: "HSK4" },
+            { c: "其次", p: "qícì", k: "បន្ទាប់មកទៀត (secondly)", level: "HSK4" },
+            { c: "起飞", p: "qǐfēi", k: "ហោះឡើង (take off)", level: "HSK4" },
+            { c: "起来", p: "qǐlái", k: "ក្រោកឡើង (get up)", level: "HSK4" },
+            { c: "气候", p: "qìhòu", k: "អាកាសធាតុ (climate)", level: "HSK4" },
+            { c: "千万", p: "qiānwàn", k: "ដាច់ខាតត្រូវតែ (must/by all means)", level: "HSK4" },
+            { c: "签证", p: "qiānzhèng", k: "ទិដ្ឋាការ / វីសា (visa)", level: "HSK4" },
+            { c: "墙", p: "qiáng", k: "ជញ្ជាំង (wall)", level: "HSK4" },
+            { c: "敲", p: "qiāo", k: "គោះ (knock)", level: "HSK4" },
+            { c: "桥", p: "qiáo", k: "ស្ពាន (bridge)", level: "HSK4" },
+            { c: "巧克力", p: "qiǎokèlì", k: "សូកូឡា (chocolate)", level: "HSK4" },
+            { c: "亲切", p: "qīnqiè", k: "ស្និទ្ធស្នាល (warm and friendly)", level: "HSK4" },
+            { c: "轻", p: "qīng", k: "ស្រាល (light weight)", level: "HSK4" },
+            { c: "轻松", p: "qīngsōng", k: "ធូរស្រាល / សម្រាក (relaxed)", level: "HSK4" },
+            { c: "情况", p: "qíngkuàng", k: "ស្ថានភាព (situation)", level: "HSK4" },
+            { c: "请假", p: "qǐngjià", k: "សុំច្បាប់ (ask for leave)", level: "HSK4" },
+            { c: "穷", p: "qióng", k: "ក្រីក្រ (poor)", level: "HSK4" },
+            { c: "区别", p: "qūbié", k: "ភាពខុសគ្នា (difference)", level: "HSK4" },
+            { c: "取", p: "qǔ", k: "ដក / យក (take/fetch/withdraw)", level: "HSK4" },
+            { c: "全部", p: "quánbù", k: "ទាំងអស់ (whole/entire)", level: "HSK4" },
+            { c: "缺点", p: "quēdiǎn", k: "ចំណុចខ្វះខាត (shortcoming/defect)", level: "HSK4" },
+            { c: "缺少", p: "quēshǎo", k: "ខ្វះខាត (lack/be short of)", level: "HSK4" },
+            { c: "却", p: "què", k: "ប៉ុន្តែ / បែរជា (yet/however)", level: "HSK4" },
+            { c: "确实", p: "quèshí", k: "ពិតជា (indeed/truly)", level: "HSK4" },
+            { c: "然而", p: "rán'ér", k: "យ៉ាងណាមិញ (however)", level: "HSK4" },
+            { c: "热闹", p: "rènao", k: "កុះករ / អ៊ូអរ (lively/bustling)", level: "HSK4" },
+            { c: "任何", p: "rènhé", k: "ណាមួយ (any/whatever)", level: "HSK4" },
+            { c: "任务", p: "rènwu", k: "ភារកិច្ច (task/mission)", level: "HSK4" },
+            { c: "扔", p: "rēng", k: "បោះចោល (throw away)", level: "HSK4" },
+            { c: "仍然", p: "réngrán", k: "នៅតែ (still/yet)", level: "HSK4" },
+            { c: "日记", p: "rìjì", k: "កំណត់ហេតុប្រចាំថ្ងៃ (diary)", level: "HSK4" },
+            { c: "入口", p: "rùkǒu", k: "ច្រកចូល (entrance)", level: "HSK4" },
+            { c: "散步", p: "sànbù", k: "ដើរកម្សាន្ត (take a walk)", level: "HSK4" },
+            { c: "森林", p: "sēnlín", k: "ព្រៃឈើ (forest)", level: "HSK4" },
+            { c: "沙发", p: "shāfā", k: "សាឡុង (sofa)", level: "HSK4" },
+            { c: "商量", p: "shāngliang", k: "ពិភាក្សា (discuss/consult)", level: "HSK4" },
+            { c: "伤心", p: "shāngxīn", k: "ខូចចិត្ត (sad/heartbroken)", level: "HSK4" },
+            { c: "稍微", p: "shāowēi", k: "បន្តិច (slightly/a little)", level: "HSK4" },
+            { c: "社会", p: "shèhuì", k: "សង្គម (society)", level: "HSK4" },
+            { c: "深", p: "shēn", k: "ជ្រៅ (deep)", level: "HSK4" },
+            { c: "申请", p: "shēnqǐng", k: "ដាក់ពាក្យស្នើសុំ (apply for)", level: "HSK4" },
+            { c: "甚至", p: "shènzhì", k: "សូម្បីតែ (even to the extent that)", level: "HSK4" },
+            { c: "生活", p: "shēnghuó", k: "ជីវិតរស់នៅ (life/live)", level: "HSK4" },
+            { c: "生命", p: "shēngmìng", k: "ជីវិត (life)", level: "HSK4" },
+            { c: "省", p: "shěng", k: "ខេត្ត / សន្សំ (province / save)", level: "HSK4" },
+            { c: "剩", p: "shèng", k: "នៅសល់ (remain/left over)", level: "HSK4" },
+            { c: "失败", p: "shībài", k: "បរាជ័យ (fail/defeat)", level: "HSK4" },
+            { c: "失望", p: "shīwàng", k: "អស់សង្ឃឹម (disappointed)", level: "HSK4" },
+            { c: "师傅", p: "shīfu", k: "លោកគ្រូ / ជាង (master worker)", level: "HSK4" },
+            { c: "湿润", p: "shīrùn", k: "សើម (moist/humid)", level: "HSK4" },
+            { c: "狮子", p: "shīzi", k: "សត្វតោ (lion)", level: "HSK4" },
+            { c: "十分", p: "shífēn", k: "យ៉ាងខ្លាំង (very/fully)", level: "HSK4" },
+            { c: "实际", p: "shíjì", k: "ការជាក់ស្តែង (reality/actual)", level: "HSK4" },
+            { c: "食品", p: "shípǐn", k: "អាហារ (food)", level: "HSK4" },
+            { c: "实现", p: "shíxiàn", k: "សម្រេចបាន (achieve/realize)", level: "HSK4" },
+            { c: "石子", p: "shízi", k: "គ្រួស (pebble/stone)", level: "HSK4" },
+            { c: "使", p: "shǐ", k: "ធ្វើឱ្យ (make/cause)", level: "HSK4" },
+            { c: "使用", p: "shǐyòng", k: "ប្រើប្រាស់ (use/employ)", level: "HSK4" },
+            { c: "世纪", p: "shìjì", k: "សតវត្ស (century)", level: "HSK4" },
+            { c: "适合", p: "shìhé", k: "សមស្រប (fit/suit)", level: "HSK4" },
+            { c: "适应", p: "shìyìng", k: "បន្ស៊ាំ (adapt to)", level: "HSK4" },
+            { c: "收", p: "shōu", k: "ទទួល / ប្រមូល (receive/collect)", level: "HSK4" },
+            { c: "收入", p: "shōurù", k: "ប្រាក់ចំណូល (income)", level: "HSK4" },
+            { c: "收拾", p: "shōushi", k: "រៀបចំ (tidy up/pack)", level: "HSK4" },
+            { c: "首都", p: "shǒudū", k: "រាជធានី (capital city)", level: "HSK4" },
+            { c: "首先", p: "shǒuxiān", k: "ជាដំបូង (first of all)", level: "HSK4" },
+            { c: "受不了", p: "shòubuliǎo", k: "ទ្រាំមិនបាន (cannot stand)", level: "HSK4" },
+            { c: "受到", p: "shòudào", k: "ទទួលបាន (receive/suffer)", level: "HSK4" },
+            { c: "售货员", p: "shòuhuòyuán", k: "អ្នកលក់ (salesperson)", level: "HSK4" },
+            { c: "输", p: "shū", k: "ចាញ់ (lose game/contest)", level: "HSK4" },
+            { c: "熟悉", p: "shúxī", k: "ស្ទាត់ជំនាញ / ស្គាល់ច្បាស់ (familiar with)", level: "HSK4" },
+            { c: "数量", p: "shùliàng", k: "ចំនួន (quantity)", level: "HSK4" },
+            { c: "数字", p: "shùzì", k: "តួលេខ (number/digit)", level: "HSK4" },
+            { c: "帅", p: "shuài", k: "សង្ហា (handsome)", level: "HSK4" },
+            { c: "顺便", p: "shùnbiàn", k: "ឆ្លៀត / កំពុងតែ (conveniently/in passing)", level: "HSK4" },
+            { c: "顺利", p: "shùnlì", k: "រលូន (smoothly)", level: "HSK4" },
+            { c: "顺序", p: "shùnxù", k: "លំដាប់លំដោយ (order/sequence)", level: "HSK4" },
+            { c: "说明", p: "shuōmíng", k: "ពន្យល់ / បង្ហាញ (explain/illustrate)", level: "HSK4" },
+            { c: "硕士", p: "shuòshì", k: "បរិញ្ញាបត្រជាន់ខ្ពស់ / អនុបណ្ឌិត (Master's degree)", level: "HSK4" },
+            { c: "死", p: "sǐ", k: "ស្លាប់ (die)", level: "HSK4" },
+            { c: "速度", p: "sùdù", k: "ល្បឿន (speed)", level: "HSK4" },
+            { c: "塑料袋", p: "sùliàodài", k: "ថង់ប្លាស្ទិក (plastic bag)", level: "HSK4" },
+            { c: "酸", p: "suān", k: "ជូរ (sour)", level: "HSK4" },
+            { c: "随便", p: "suíbiàn", k: "តាមចិត្ត (as one pleases)", level: "HSK4" },
+            { c: "随着", p: "suízhe", k: "ស្របពេលជាមួយ (along with)", level: "HSK4" },
+            { c: "孙子", p: "sūnzi", k: "ចៅប្រុស (grandson)", level: "HSK4" },
+            { c: "所有", p: "suǒyǒu", k: "ទាំងអស់ (all/possess)", level: "HSK4" },
+            { c: "台", p: "tái", k: "គ្រឿង (measure word for machines)", level: "HSK4" },
+            { c: "抬", p: "tái", k: "សែង / លើក (lift/carry)", level: "HSK4" },
+            { c: "态度", p: "tàidu", k: "អាកប្បកិរិយា (attitude)", level: "HSK4" },
+            { c: "谈", p: "tán", k: "ជជែក (talk/chat)", level: "HSK4" },
+            { c: "弹钢琴", p: "tán gāngqín", k: "တီးព្យាណូ (play piano)", level: "HSK4" },
+            { c: "汤", p: "tāng", k: "ស៊ុប (soup)", level: "HSK4" },
+            { c: "糖", p: "táng", k: "ស្ករ / ស្ករគ្រាប់ (sugar/candy)", level: "HSK4" },
+            { c: "躺", p: "tǎng", k: "ដេក (lie down)", level: "HSK4" },
+            { c: "趟", p: "tàng", k: "ជើង (measure word for trips)", level: "HSK4" },
+            { c: "讨论", p: "tǎolùn", k: "ពិភាក្សា (discuss)", level: "HSK4" },
+            { c: "讨厌", p: "tǎoyàn", k: "ស្អប់ (dislike/hate)", level: "HSK4" },
+            { c: "特点", p: "tèdiǎn", k: "លក្ខណៈពិសេស (characteristic)", level: "HSK4" },
+            { c: "提", p: "tí", k: "យួរ / លើកឡើង (carry/mention)", level: "HSK4" },
+            { c: "提供", p: "tígōng", k: "ផ្តល់ជូន (provide/supply)", level: "HSK4" },
+            { c: "提前", p: "tíqián", k: "ធ្វើមុនកំណត់ (in advance)", level: "HSK4" },
+            { c: "提醒", p: "tíxǐng", k: "រំលឹក (remind)", level: "HSK4" },
+            { c: "填空", p: "tiánkòng", k: "បំពេញចន្លោះ (fill in the blank)", level: "HSK4" },
+            { c: "条件", p: "tiáojiàn", k: "លក្ខខណ្ឌ (condition)", level: "HSK4" },
+            { c: "停止", p: "tíngzhǐ", k: "បញ្ឈប់ (stop)", level: "HSK4" },
+            { c: "挺", p: "tǐng", k: "ណាស់ (quite/very)", level: "HSK4" },
+            { c: "通过", p: "tōngguò", k: "តាមរយៈ / ជាប់ (pass through/by means of)", level: "HSK4" },
+            { c: "通知", p: "tōngzhī", k: "ជូនដំណឹង (notify/notice)", level: "HSK4" },
+            { c: "同情", p: "tóngqíng", k: "អាណិតអាសូរ (sympathize)", level: "HSK4" },
+            { c: "推", p: "tuī", k: "រុញ (push)", level: "HSK4" },
+            { c: "推迟", p: "tuīchí", k: "ពន្យារពេល (postpone)", level: "HSK4" },
+            { c: "脱", p: "tuō", k: "ដោះ (take off clothes)", level: "HSK4" },
+            { c: "网球", p: "wǎngqiú", k: "វាយកូនបាល់ (tennis)", level: "HSK4" },
+            { c: "网站", p: "wǎngzhàn", k: "គេហទំព័រ (website)", level: "HSK4" },
+            { c: "往", p: "wǎng", k: "សំដៅទៅ (towards)", level: "HSK4" },
+            { c: "往往", p: "wǎngwǎng", k: "ជាញឹកញាប់ (often/usually)", level: "HSK4" },
+            { c: "效果", p: "xiàoguǒ", k: "ប្រសិទ្ធភាព / ផល (effect/result)", level: "HSK4" },
+            { c: "西红柿", p: "xīhóngshì", k: "ប៉េងប៉ោះ (tomato)", level: "HSK4" },
+            { c: "吸引", p: "xīyǐn", k: "ទាក់ទាញ (attract)", level: "HSK4" },
+            { c: "咸", p: "xián", k: "ប្រៃ (salty)", level: "HSK4" },
+            { c: "现金", p: "xiànjīn", k: "ប្រាក់សុទ្ធ (cash)", level: "HSK4" },
+            { c: "羡慕", p: "xiànmù", k: "ច្រណែន / ស្រឡាញ់ចង់បាន (envy/admire)", level: "HSK4" },
+            { c: "相反", p: "xiāngfǎn", k: "ផ្ទុយទៅវិញ (opposite/contrary)", level: "HSK4" },
+            { c: "香", p: "xiāng", k: "ឈ្ងុយ (fragrant/delicious)", level: "HSK4" },
+            { c: "详细", p: "xiángxì", k: "លម្អិត (detailed)", level: "HSK4" },
+            { c: "响", p: "xiǎng", k: "រោទ៍ / ឮសម្លេង (ring/make sound)", level: "HSK4" },
+            { c: "橡皮", p: "xiàngpí", k: "ជ័រលុប (eraser)", level: "HSK4" },
+            { c: "消息", p: "xiāoxi", k: "ដំណឹង (news/message)", level: "HSK4" },
+            { c: "小吃", p: "xiǎochī", k: "ចំណីអាហារសម្រន់ (snack)", level: "HSK4" },
+            { c: "小说", p: "xiǎoshuō", k: "ប្រលោមលោក (novel)", level: "HSK4" },
+            { c: "笑话", p: "xiàohua", k: "រឿងកំប្លែង (joke)", level: "HSK4" },
+            { c: "心情", p: "xīnqíng", k: "អារម្មណ៍ (mood)", level: "HSK4" },
+            { c: "辛苦", p: "xīnkǔ", k: "លំបាកនឿយហត់ (hard work/laborious)", level: "HSK4" },
+            { c: "信封", p: "xìnfēng", k: "ស្រោមសំបុត្រ (envelope)", level: "HSK4" },
+            { c: "信息", p: "xìnxī", k: "ព័ត៌មាន (information)", level: "HSK4" },
+            { c: "信心", p: "xìnxīn", k: "ទំនុកចិត្ត (confidence)", level: "HSK4" },
+            { c: "兴奋", p: "xīngfèn", k: "រំភើបខ្លាំង (excited)", level: "HSK4" },
+            { c: "行", p: "xíng", k: "បាន / មិនអីទេ (ok/all right)", level: "HSK4" },
+            { c: "醒", p: "xǐng", k: "ភ្ញាក់ពីគេង (wake up)", level: "HSK4" },
+            { c: "幸福", p: "xìngfú", k: "សុភមង្គល (happy/blessed)", level: "HSK4" },
+            { c: "性格", p: "xìnggé", k: "បុគ្គលិកលក្ខណៈ (personality)", level: "HSK4" },
+            { c: "修理", p: "xiūlǐ", k: "ជួសជុល (repair/fix)", level: "HSK4" },
+            { c: "许多", p: "xǔduō", k: "ច្រើន (many/much)", level: "HSK4" },
+            { c: "压力", p: "yālì", k: "សម្ពាធ (pressure)", level: "HSK4" },
+            { c: "牙膏", p: "yágāo", k: "ថ្នាំដុសធ្មេញ (toothpaste)", level: "HSK4" },
+            { c: "亚洲", p: "yàzhōu", k: "អាស៊ី (Asia)", level: "HSK4" },
+            { c: "呀", p: "ya", k: "អូ (particle expressing surprise)", level: "HSK4" },
+            { c: "盐", p: "yán", k: "អំបិល (salt)", level: "HSK4" },
+            { c: "严格", p: "yángé", k: "ម៉ឺងម៉ាត់ (strict)", level: "HSK4" },
+            { c: "严重", p: "yánzhòng", k: "ធ្ងន់ធ្ងរ (serious/severe)", level: "HSK4" },
+            { c: "研究生", p: "yánjiūshēng", k: "និស្សិតអនុបណ្ឌិត (postgraduate)", level: "HSK4" },
+            { c: "演出", p: "yǎnchū", k: "ការសម្តែង (show/performance)", level: "HSK4" },
+            { c: "演员", p: "yǎnyuán", k: "តារាសម្តែង (actor/actress)", level: "HSK4" },
+            { c: "阳光", p: "yángguāng", k: "ពន្លឺព្រះអាទិត្យ (sunlight)", level: "HSK4" },
+            { c: "养成", p: "yǎngchéng", k: "បង្កើតឱ្យទៅជា (form habit)", level: "HSK4" },
+            { c: "样子", p: "yàngzi", k: "រូបរាង (appearance/look)", level: "HSK4" },
+            { c: "邀请", p: "yāoqǐng", k: "អញ្ជើញ (invite)", level: "HSK4" },
+            { c: "钥匙", p: "yàoshi", k: "កូនសោ (key)", level: "HSK4" },
+            { c: "也许", p: "yěxǔ", k: "ប្រហែលជា (perhaps/maybe)", level: "HSK4" },
+            { c: "叶子", p: "yèzi", k: "ស្លឹកឈើ (leaf)", level: "HSK4" },
+            { c: "页", p: "yè", k: "ទំព័រ (page)", level: "HSK4" },
+            { c: "一切", p: "yíqiè", k: "អ្វីៗទាំងអស់ (everything)", level: "HSK4" },
+            { c: "以", p: "yǐ", k: "ដោយ / ដើម្បី (by/with/in order to)", level: "HSK4" },
+            { c: "以为", p: "yǐwéi", k: "ស្មានថា (thought wrongly)", level: "HSK4" },
+            { c: "艺术", p: "yìshù", k: "សិល្បៈ (art)", level: "HSK4" },
+            { c: "意见", p: "yìjiàn", k: "មតិយោបល់ (opinion/suggestion)", level: "HSK4" },
+            { c: "因此", p: "yīncǐ", k: "ដូចនេះ (therefore/thus)", level: "HSK4" },
+            { c: "引起", p: "yǐnqǐ", k: "បង្កឱ្យមាន (cause/lead to)", level: "HSK4" },
+            { c: "印象", p: "yìnxiàng", k: "ការចាប់អារម្មណ៍ (impression)", level: "HSK4" },
+            { c: "赢", p: "yíng", k: "ឈ្នះ (win)", level: "HSK4" },
+            { c: "招聘", p: "zhāopìn", k: "រើសបុគ្គលិក (recruit/hire)", level: "HSK4" },
+            { c: "照", p: "zhào", k: "ថត / ឆ្លុះ (photograph/reflect)", level: "HSK4" },
+            { c: "正确", p: "zhèngquè", k: "ត្រឹមត្រូវ (correct/proper)", level: "HSK4" },
+            { c: "正式", p: "zhèngshì", k: "ផ្លូវការ (formal/official)", level: "HSK4" },
+            { c: "证明", p: "zhèngmíng", k: "បញ្ជាក់ (prove/testify)", level: "HSK4" },
+            { c: "支持", p: "zhīchí", k: "គាំទ្រ (support)", level: "HSK4" },
+            { c: "知识", p: "zhīshi", k: "ចំណេះដឹង (knowledge)", level: "HSK4" },
+            { c: "直接", p: "zhíjiē", k: "ផ្ទាល់ (direct/straightforward)", level: "HSK4" },
+            { c: "值得", p: "zhídé", k: "សក្តិសម (worthwhile)", level: "HSK4" },
+            { c: "职业", p: "zhíyè", k: "អាជីព / មុខរបរ (profession/occupation)", level: "HSK4" },
+            { c: "植物", p: "zhíwù", k: "រុក្ខជាតិ (plant)", level: "HSK4" },
+            { c: "只要", p: "zhǐyào", k: "ឱ្យតែ (as long as)", level: "HSK4" },
+            { c: "指", p: "zhǐ", k: "ចង្អុល (point at)", level: "HSK4" },
+            { c: "至少", p: "zhìshǎo", k: "យ៉ាងហោចណាស់ (at least)", level: "HSK4" },
+            { c: "质量", p: "zhìliàng", k: "គុណភាព (quality)", level: "HSK4" },
+            { c: "重", p: "zhòng", k: "ធ្ងន់ (heavy)", level: "HSK4" },
+            { c: "重点", p: "zhòngdiǎn", k: "ចំណុចសំខាន់ (focus/key point)", level: "HSK4" },
+            { c: "专门", p: "zhuānmén", k: "ឯកទេស / ផ្ទាល់ (specialized)", level: "HSK4" },
+            { c: "专业", p: "zhuānyè", k: "ជំនាញ (major/profession)", level: "HSK4" },
+            { c: "赚", p: "zhuàn", k: "រកប្រាក់ចំណេញ (earn/make profit)", level: "HSK4" },
+            { c: "准确", p: "zhǔnquè", k: "ច្បាស់លាស់ត្រឹមត្រូវ (accurate/exact)", level: "HSK4" },
+            { c: "准时", p: "zhǔnshí", k: "ចំពេលកំណត់ (punctual/on time)", level: "HSK4" },
+            { c: "自然", p: "zìrán", k: "ធម្មជាតិ (nature/natural)", level: "HSK4" },
+            { c: "自信", p: "zìxìn", k: "ទំនុកចិត្តលើខ្លួនឯង (self-confident)", level: "HSK4" },
+            { c: "总结", p: "zǒngjié", k: "សរុបបូកសរុប (summarize)", level: "HSK4" },
+            { c: "租", p: "zū", k: "ជួល (rent)", level: "HSK4" },
+            { c: "最好", p: "zuìhǎo", k: "ល្អបំផុត (had better / best)", level: "HSK4" },
+            { c: "尊重", p: "zūnzhòng", k: "គោរព (respect)", level: "HSK4" },
+            { c: "左右", p: "zuǒyòu", k: "ប្រហែល / សងខាង (about / around)", level: "HSK4" },
+            { c: "作家", p: "zuòjiā", k: "អ្នកនិពន្ធ (author/writer)", level: "HSK4" },
+            { c: "作用", p: "zuòyòng", k: "តួនាទី / ផលប៉ះពាល់ (effect/role)", level: "HSK4" },
+            { c: "作者", p: "zuòzhě", k: "អ្នកបង្កើត / អ្នកនិពន្ធ (author)", level: "HSK4" },
+            { c: "座", p: "zuò", k: "កន្លែងអង្គុយ / ខ្នាតអគារ (seat / measure word for buildings)", level: "HSK4" },
+            { c: "座位", p: "zuòwèi", k: "កៅអី / កន្លែងអង្គុយ (seat)", level: "HSK4" },
+            
+            // --- Newly Added Sentences & Vocabulary ---
+            { c: "你好，很高兴认识你。", p: "Nǐ hǎo, hěn gāoxìng rènshi nǐ.", k: "សួស្តី រីករាយដែលបានស្គាល់អ្នក។", level: "HSK1" },
+            { c: "早上好，今天天气真好。", p: "Zǎoshang hǎo, jīntiān tiānqì zhēn hǎo.", k: "អរុណសួស្តី ថ្ងៃនេះអាកាសធាតុល្អណាស់។", level: "HSK1" },
+            { c: "你叫什么名字？", p: "Nǐ jiào shénme míngzi?", k: "តើអ្នកឈ្មោះអ្វីដែរ?", level: "HSK1" },
+            { c: "我的名字叫Heng。", p: "Wǒ de míngzi jiào Heng.", k: "ខ្ញុំឈ្មោះ Heng។", level: "HSK1" },
+            { c: "你是哪国人？", p: "Nǐ shì nǎ guórén?", k: "តើអ្នកជាជនជាតិអ្វី?", level: "HSK1" },
+            { c: "我是柬埔寨人。", p: "Wǒ shì Jiǎnpǔzhài rén.", k: "ខ្ញុំជាជនជាតិខ្មែរ។", level: "HSK1" },
+            { c: "你会说汉语吗？", p: "Nǐ huì shuō hànyǔ ma?", k: "តើអ្នកចេះនិយាយភាសាចិនទេ?", level: "HSK1" },
+            { c: "我会说一点儿汉语。", p: "Wǒ huì shuō yìdiǎnr hànyǔ.", k: "ខ្ញុំចេះនិយាយភាសាចិនបន្តិចបន្តួច។", level: "HSK1" },
+            { c: "请问，现在几点了？", p: "Qǐngwèn, xiànzài jǐ diǎn le?", k: "សូមសួរថា ឥឡូវម៉ោងប៉ុន្មានហើយ?", level: "HSK1" },
+            { c: "现在下午三点半。", p: "Xiànzài xiàwǔ sān diǎn bàn.", k: "ឥឡូវនេះម៉ោង ៣ និងកន្លះរសៀល។", level: "HSK1" },
+            { c: "今天星期几？", p: "Jīntiān xīngqī jǐ?", k: "ថ្ងៃនេះថ្ងៃអី?", level: "HSK1" },
+            { c: "今天星期天。", p: "Jīntiān xīngqītiān.", k: "ថ្ងៃនេះថ្ងៃអាទិត្យ។", level: "HSK1" },
+            { c: "你今天要做什么？", p: "Nǐ jīntiān yào zuò shénme?", k: "តើថ្ងៃនេះអ្នកចង់ធ្វើអ្វី?", level: "HSK1" },
+            { c: "我今天要Daza学习。", p: "Wǒ jīntiān yào zài jiā xuéxí.", k: "ថ្ងៃនេះខ្ញុំត្រូវរៀននៅផ្ទះ។", level: "HSK1" },
+            { c: "你喜欢喝什么？", p: "Nǐ xǐhuān hē shénme?", k: "តើអ្នកចូលចិត្តផឹកអ្វី?", level: "HSK1" },
+            { c: "我喜欢喝冰咖啡。", p: "Wǒ xǐhuān hē bīng kāfēi.", k: "ខ្ញុំចូលចិត្តផឹកកាហ្វេទឹកកក។", level: "HSK1" },
+            { c: "这个多少钱？", p: "Zhège duōshǎo qián?", k: "อันនេះតម្លៃប៉ុន្មានដែរ?", level: "HSK1" },
+            { c: "这个很贵。", p: "Zhège hěn guì.", k: "មួយនេះថ្លៃណាស់។", level: "HSK2" },
+            { c: "那个很便宜。", p: "Nàge hěn piányi.", k: "មួយនោះថោកណាស់។", level: "HSK2" },
+            { c: "太好了！", p: "Tài hǎo le!", k: "ល្អណាស់!", level: "HSK1" },
+            { c: "谢谢你的帮助。", p: "Xièxiè nǐ de bāngzhù.", k: "អរគុណសម្រាប់ការជួយជ្រោមជ្រែង។", level: "HSK2" },
+            { c: "不客气，这是应该的。", p: "Bú kèqi, zhè shì yīnggāi de.", k: "មិនអីទេ ហ្នឹងជាកាតព្វកិច្ចទេ។", level: "HSK3" },
+            { c: "对不起，我迟到了。", p: "Duìbuqǐ, wǒ chídào le.", k: "សុំទោស ខ្ញុំមកយឺតហើយ។", level: "HSK3" },
+            { c: "没关系。", p: "Méi guānxi.", k: "មិនអីទេ។", level: "HSK1" },
+            { c: "再见， 祝你明天愉快！", p: "Zàijiàn, zhù nǐ míngtiān yúkuài!", k: "លាហើយ សូមជូនពរឱ្យថ្ងៃស្អែកអ្នកមានសេចក្តីសុខ!", level: "HSK3" },
+            { c: "你在哪儿工作？", p: "Nǐ zài nǎr gōngzuò?", k: "តើអ្នកធ្វើការនៅឯណា?", level: "HSK1" },
+            { c: "我在电脑店工作。", p: "Wǒ zài diànnǎo diàn gōngzuò.", k: "ខ្ញុំធ្វើការនៅហាងកុំព្យូទ័រ។", level: "HSK1" },
+            { c: "你会修电脑吗？", p: "Nǐ huì xiū diànnǎo ma?", k: "តើអ្នកចេះជួសជុលកុំព្យូទ័រទេ?", level: "HSK3" },
+            { c: "我会组装电脑。", p: "Wǒ huì zǔzhuāng diànnǎo.", k: "ខ្ញុំចេះផ្គុំកុំព្យូទ័រ (Custom Build)។", level: "HSK4" },
+            { c: "今天天气怎么样？", p: "Jīntiān tiānqì zěnme yàng?", k: "តើអាកាសធាតុថ្ងៃនេះយ៉ាងម៉េចដែរ?", level: "HSK1" },
+            { c: "外面正在下雨。", p: "Wàimiàn zhèngzài xià yǔ.", k: "ខាងក្រៅកំពុងធ្លាក់ភ្លៀង។", level: "HSK2" },
+            { c: "你要去哪里？", p: "Nǐ yào qù nǎlǐ?", k: "តើអ្នកចង់ទៅណា?", level: "HSK1" },
+            { c: "我要去超市买东西。", p: "Wǒ yào qù chāoshì mǎi dōngxī.", k: "ខ្ញុំចង់ទៅផ្សារទំនើបដើម្បីទិញឥវ៉ាន់។", level: "HSK2" },
+            { c: "你会打篮球吗？", p: "Nǐ huì dǎ lánqiú ma?", k: "តើអ្នកចេះលេងបាល់បោះទេ?", level: "HSK2" },
+            { c: "我喜欢玩手机游戏。", p: "Wǒ xǐhuān wán shǒujī yóuxì.", k: "ខ្ញុំចូលចិត្តលេងហ្គេមទូរស័ព្ទ។", level: "HSK2" },
+            { c: "祝你生日快乐！", p: "Zhù nǐ shēngrì kuàilè!", k: "សូមជូនពរខួបកំណើតរីករាយ!", level: "HSK2" },
+            { c: "你家庭有几口人？", p: "Nǐ jiātíng yǒu jǐ kǒu rén?", k: "តើគ្រួសារអ្នកមានសមាជិកប៉ុន្មាននាក់?", level: "HSK3" },
+            { c: "我家有四口人。", p: "Wǒ jiā yǒu sì kǒu rén.", k: "គ្រួសារខ្ញុំមានបួននាក់។", level: "HSK1" },
+            { c: "这是我的爸爸和妈妈。", p: "Zhè shì wǒ de bàba hé māmā.", k: "នេះគឺជាលោកឪពុកនិងអ្នកម្តាយរបស់ខ្ញុំ។", level: "HSK1" },
+            { c: "我有一个哥哥和一个弟弟。", p: "Wǒ yǒu yí gè gēge hé yí gè dìdi.", k: "ខ្ញុំមានបងប្រុសម្នាក់និងប្អូនប្រុសម្នាក់។", level: "HSK2" },
+            { c: "你平时喜欢做什么？", p: "Nǐ píngshí xǐhuān zuò shénme?", k: "ជាទូទៅតើអ្នកចូលចិត្តធ្វើអ្វី?", level: "HSK3" },
+            { c: "我喜欢看电影和听音乐。", p: "Wǒ xǐhuān kàn diànyǐng hé tīng yīnyuè.", k: "ខ្ញុំចូលចិត្តមើលភាពយន្តនិងស្តាប់តន្ត្រី។", level: "HSK1" },
+            { c: "你会做饭吗？", p: "Nǐ huì zuò fàn ma?", k: "តើអ្នកចេះធ្វើម្ហូបទេ?", level: "HSK1" },
+            { c: "我喜欢吃柬埔寨菜。", p: "Wǒ xǐhuān chī Jiǎnpǔzhài cài.", k: "ខ្ញុំចូលចិត្តញ៉ាំម្ហូបខ្មែរ។", level: "HSK1" },
+            { c: "烤鱿鱼配贡贡酱很好吃。", p: "Kǎo yóuyú pèi Gònggòng jiàng hěn hǎochī.", k: "មឹកអាំងជាមួយទឹកជ្រលក់កោះកុងឆ្ងាញ់ណាស់។", level: "HSK4" },
+            { c: "你学什么专业？", p: "Nǐ xué shénme zhuānyè?", k: "តើអ្នករៀនជំនាញអ្វី?", level: "HSK3" },
+            { c: "我学电脑多媒体设计。", p: "Wǒ xué diànnǎo duōméitǐ shèjì.", k: "ខ្ញុំរៀនផ្នែករចនាម៉ាស៊ីននិងពហុមេឌៀ (Multimedia Design)។", level: "HSK4" },
+            { c: "这个设计非常漂亮。", p: "Zhège shèjì fēicháng piàoliang.", k: "การឌីហ្សាញនេះស្អាតខ្លាំងណាស់។", level: "HSK3" },
+            { c: "请帮我修改一下图片。", p: "Qǐng bāng wǒ xiūgǎi yíxià túpiàn.", k: "សូមជួយកែសម្រួលរូបភាពនេះបន្តិច។", level: "HSK3" },
+            { c: "我们要准时交作业。", p: "Wǒmen yào zhǔnshí jiāo zuòyè.", k: "ពួកយើងត្រូវដាក់កិច្ចការផ្ទះឱ្យទាន់ពេល។", level: "HSK3" },
+            { c: "明天的考试难不难？", p: "Míngtiān de kǎoshì nán bù nán?", k: "តើការប្រឡងថ្ងៃស្អែកពិបាកឬអត់?", level: "HSK2" },
+            { c: "只要努力，就不难。", p: "Zhǐyào nǔlì, jiù bù nán.", k: "ឱ្យតែខិតខំ គឺមិនពិបាកទេ។", level: "HSK3" },
+            { c: "我们要保持身体健康。", p: "Wǒmen yào bǎochí shēntǐ jiànkāng.", k: "ពួកយើងត្រូវថែរក្សាសុខភាពឱ្យបានល្អ។", level: "HSK3" },
+            { c: "每天多喝水很有益。", p: "Měitiān duō hē shuǐ hěn yǒuyì.", k: "ការផឹកទឹកឱ្យបានច្រើនជារៀងរាល់ថ្ងៃគឺមានប្រយោជន៍ណាស់។", level: "HSK3" },
+            { c: "你在看什么书？", p: "Nǐ zài kàn shénme shū?", k: "តើអ្នកកំពុងអានសៀវភៅអ្វី?", level: "HSK1" },
+            { c: "这是一本历史书。", p: "Zhè shì yì běn lìshǐ shū.", k: "នេះគឺជាសៀវភៅប្រវត្តិសាស្ត្រ។", level: "HSK3" },
+            { c: "我很喜欢中国文化。", p: "Wǒ hěn xǐhuān Zhōngguó wénhuà.", k: "ខ្ញុំចូលចិត្តវប្បធម៌ចិនណាស់។", level: "HSK3" },
+            { c: "我们去旅游吧！", p: "Wǒmen qù lǚyóu ba!", k: "តោះពួកយើងទៅដើរកម្សាន្តទាំងអស់គ្នា!", level: "HSK2" },
+            { c: "金边有很多漂亮的地方。", p: "Jīnbiān yǒu hěn duō piàoliang de dìfang.", k: "រាជធានីភ្នំពេញមានកន្លែងស្អាតៗជាច្រើន។", level: "HSK2" },
+            { c: "祝你一切顺利！", p: "Zhù nǐ yíqiè shùnlì!", k: "សូមជូនពរឱ្យអ្នកទទួលបានជោគជ័យគ្រប់ភារកិច្ច!", level: "HSK3" },
+            { c: "请问这附近有银行吗？", p: "Qǐngwèn zhè fùjìn yǒu yínháng ma?", k: "សូមសួរថា តើជុំវិញនេះមានធនាគារទេ?", level: "HSK2" },
+            { c: "往前走就是了。", p: "Wǎng qián zǒu jiù shì le.", k: "ដើរត្រង់ទៅគឺដល់ហើយ។", level: "HSK2" },
+            { c: "我想租一套房子。", p: "Wǒ xiǎng zū yí tào fángzi.", k: "ខ្ញុំចង់ជួលផ្ទះមួយល្វែង។", level: "HSK3" },
+            { c: "房租是多少钱一个月？", p: "Fángzū shì duōshǎo qián yí gè yuè?", k: "តម្លៃឈ្នួលផ្ទះប៉ុន្មានក្នុងមួយខែ?", level: "HSK3" },
+            { c: "我对这个很感兴趣。", p: "Wǒ duì zhège hěn gǎn xīngqù.", k: "ខ្ញុំមានចំណាប់អារម្មណ៍ខ្លាំងលើរឿងនេះ។", level: "HSK3" },
+            { c: "请给我一杯热茶。", p: "Qǐng gěi wǒ yì bēi rè chá.", k: "សូមឱ្យខ្ញុំតែក្រហមឧណ្ហៗមួយកែវ។", level: "HSK1" },
+            { c: "今天我非常累。", p: "Jīntiān wǒ fēicháng lèi.", k: "ថ្ងៃនេះខ្ញុំហត់ខ្លាំងណាស់។", level: "HSK2" },
+            { c: "我想早点休息。", p: "Wǒ xiǎng zǎodiǎn xiūxi.", k: "ខ្ញុំចង់សម្រាកឱ្យបានលឿនបន្តិច។", level: "HSK1" },
+            { c: "明天有很多事情要办。", p: "Míngtiān wǒ yǒu hěn duō shìqing yào bàn.", k: "ថ្ងៃស្អែកខ្ញុំមានកិច្ចការងារត្រូវធ្វើច្រើនណាស់។", level: "HSK3" },
+            { c: "你什么时候有空？", p: "Nǐ shénme shíhòu yǒu kòng?", k: "តើអ្នកទំនេរនៅពេលណា?", level: "HSK2" },
+            { c: "我们周末去喝咖啡吧。", p: "Wǒmen zhōumò qù hē kāfēi ba.", k: "ចុងសប្តាហ៍នេះពួកយើងទៅផឹកកាហ្វេណា។", level: "HSK3" },
+            { c: "这个主意不错！", p: "Zhège zhǔyi bú cuò!", k: "យោបល់នេះមិនអាក្រក់ទេ។", level: "HSK3" },
+            { c: "我同意你的看法。", p: "Wǒ tóngyì nǐ de kànfǎ.", k: "ខ្ញុំយល់ស្របជាមួយទស្សនៈរបស់អ្នកទាំងស្រុង។", level: "HSK3" },
+            { c: "遇到困难不要放弃。", p: "Yùdào kùnnan bú yào fàngqì.", k: "ពេលជួបការលំបាក កុំបោះបង់ចោលឱ្យសោះ។", level: "HSK4" },
+            { c: "坚持就是胜利。", p: "Jiānchí jiù shì shènglì.", k: "ការអត់ធ្មត់ព្យាយាមគឺជាជ័យជម្នះ។", level: "HSK4" },
+            { c: "你觉得这件衣服怎么样？", p: "Nǐ juéde zhè jiàn yīfu zěnme yàng?", k: "តើអ្នកយល់យ៉ាងណាចំពោះអាវមួយនេះ?", level: "HSK2" },
+            { c: "颜色非常搭配。", p: "Yánsè fēicháng dāpèi.", k: "ពណ៌ស្រុះគ្នាសម្រេចបានល្អណាស់។", level: "HSK4" },
+            { c: "我打算买一台新手机。", p: "Wǒ dǎsuan mǎi yì tái xīn shǒujī.", k: "ខ្ញុំមានគម្រោងទិញទូរស័ព្ទដៃថ្មីមួយគ្រឿង។", level: "HSK3" },
+            { c: "这部手机性能很好。", p: "Zhè bù shǒujī xìngnéng hěn hǎo.", k: "ទូរស័ព្ទដៃនេះមានសមត្ថភាពដំណើរការល្អណាស់។", level: "HSK4" },
+            { c: "请把空调温度调高一点。", p: "Qǐng bǎ kōngtiáo wēndù tiáo gāo yìdiǎn.", k: "សូមជួយដំឡើងសីតុណ្ហភាពម៉ាស៊ីនត្រជាក់ឡើងបន្តិច។", level: "HSK3" },
+            { c: "外面风很大。", p: "Wàimiàn fēng hěn dà.", k: "ខាងក្រៅខ្យល់បក់ខ្លាំងណាស់។", level: "HSK2" },
+            { c: "开车注意安全。", p: "Kāichē zhùyì ānquán.", k: "បើកបរប្រុងប្រយ័ត្នសុវត្ថិភាព។", level: "HSK3" },
+            { c: "路上慢走。", p: "Lùshang màn zǒu.", k: "ធ្វើដំណើរតាមផ្លូវប្រយ័ត្នប្រយែង។", level: "HSK2" },
+            { c: "非常感谢您的照顾。", p: "Fēicháng gǎnxiè nín de zhàogu.", k: "អរគុណខ្លាំងណាស់សម្រាប់ការថែទាំកន្លងមក។", level: "HSK3" },
+            { c: "祝您身体健康，生意兴隆！", p: "Zhù nín shēntǐ jiànkāng, shēngyì xīnglóng!", k: "សូមជូនពរលោកសុខភាពល្អ និងរកស៊ីមានបានកាន់តែរីកចម្រើន!", level: "HSK4" }
+        ];
+
+        // Pagination State
+        let currentPage = 1;
+        const itemsPerPage = 30;
+        let filteredData = [...vocabulary];
+
+        // Filter Function
+        function filterData() {
+            const query = document.getElementById('searchInput').value.toLowerCase().trim();
+            const selectedLevel = document.getElementById('levelFilter').value;
+
+            filteredData = vocabulary.filter(item => {
+                const matchesLevel = (selectedLevel === "ALL") || (item.level === selectedLevel);
+                const matchesQuery = item.c.toLowerCase().includes(query) || 
+                                     item.p.toLowerCase().includes(query) || 
+                                     item.k.toLowerCase().includes(query);
+                return matchesLevel && matchesQuery;
+            });
+        }
+
+        function onFilterChange() {
+            filterData();
+            currentPage = 1;
+            render();
+        }
+
+        function changePage(direction) {
+            const maxPage = Math.ceil(filteredData.length / itemsPerPage) || 1;
+            currentPage += direction;
+            if (currentPage < 1) currentPage = 1;
+            if (currentPage > maxPage) currentPage = maxPage;
+            render();
+        }
+
+        function render() {
+            const lessonsList = document.getElementById('lessonsList');
+            const totalResults = document.getElementById('totalResults');
+            const pageIndicator = document.getElementById('pageIndicator');
+            const paginationText = document.getElementById('paginationText');
+            const prevBtn = document.getElementById('prevBtn');
+            const nextBtn = document.getElementById('nextBtn');
+
+            const total = filteredData.length;
+            const maxPage = Math.ceil(total / itemsPerPage) || 1;
+
+            totalResults.textContent = `រកឃើញ ${total} ពាក្យ`;
+            pageIndicator.textContent = `ទំព័រ ${currentPage} / ${maxPage}`;
+            paginationText.textContent = `${currentPage}`;
+
+            prevBtn.disabled = currentPage === 1;
+            nextBtn.disabled = currentPage === maxPage || maxPage === 0;
+
+            if (total === 0) {
+                lessonsList.innerHTML = `<div class="no-result">មិនមានពាក្យដែលអ្នកស្វែងរកឡើយ</div>`;
+                return;
+            }
+
+            const startIndex = (currentPage - 1) * itemsPerPage;
+            const pageItems = filteredData.slice(startIndex, startIndex + itemsPerPage);
+
+            lessonsList.innerHTML = pageItems.map(item => `
+                <div class="lesson-card ${item.level.toLowerCase()}">
+                    <div class="lesson-info">
+                        <div class="chinese-wrapper">
+                            <span class="chinese">${item.c}</span>
+                            <span class="tag tag-${item.level.toLowerCase()}">${item.level}</span>
+                        </div>
+                        <span class="pinyin">${item.p}</span>
+                        <span class="khmer">${item.k}</span>
+                    </div>
+                    <button class="audio-btn" onclick="speakChinese('${item.c}')">
+                        🔊 ស្តាប់
+                    </button>
+                </div>
+            `).join('');
+        }
+
+        // Text-to-Speech Function
+        function speakChinese(text) {
+            if ('speechSynthesis' in window) {
+                window.speechSynthesis.cancel(); // Stop previous audio
+                let utterance = new SpeechSynthesisUtterance(text);
+                utterance.lang = 'zh-CN';
+                utterance.rate = 0.9; // Slightly slower for better learning
+                window.speechSynthesis.speak(utterance);
+            } else {
+                alert("Browser របស់អ្នកមិនទ្រទ្រង់មុខងារបញ្ចេញសំឡេងនេះទេ។");
+            }
+        }
+
+        // Initial render
+        render();
+    </script>
+</body>
+</html>
